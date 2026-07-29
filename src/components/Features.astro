@@ -1,5 +1,6 @@
 ---
 import { features } from "../data/landing";
+import Icon from "./Icon.astro";
 ---
 
 <section id="features" class="section container features">
@@ -11,7 +12,9 @@ import { features } from "../data/landing";
     {
       features.map((f) => (
         <div class="card">
-          <div class="icon" aria-hidden="true"></div>
+          <div class="icon" aria-hidden="true">
+            <Icon name={f.icon} />
+          </div>
           <h3 class="card-title">{f.title}</h3>
           <p class="card-body">{f.body}</p>
         </div>
@@ -48,10 +51,15 @@ import { features } from "../data/landing";
     flex-direction: column;
     gap: 10px;
   }
+  /* Tinted tile behind the glyph, matching the hero badge treatment. */
   .icon {
     width: 36px;
     height: 36px;
-    background: var(--placeholder-icon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brand-tint);
+    color: var(--brand);
     border-radius: 8px;
   }
   .card-title {

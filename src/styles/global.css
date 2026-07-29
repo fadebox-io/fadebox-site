@@ -27,7 +27,6 @@
   --border-strong: #c4cdd8;
   --badge-border: #d3dbfd;
   --placeholder: #f2f5f9;
-  --placeholder-icon: #e7ecf3;
   --code-bg: var(--navy);
   --code-text: #c9e8c9;
 
@@ -165,7 +164,6 @@ h3 {
     --border-strong: #464b52;
     --badge-border: rgba(205, 222, 0, 0.35);
     --placeholder: #26292e;
-    --placeholder-icon: #2f3339;
     --code-bg: #14161a;
     --code-text: #dce48a;
   }

@@ -18,41 +18,48 @@ export const links = {
 };
 
 /**
- * Pricing is a placeholder — the business model is not final. Flip this to
- * `false` to remove the pricing section entirely (also drop the "Pricing" nav
- * link in Nav.astro).
+ * Flip this to `false` to remove the pricing section entirely (also drops the
+ * "Pricing" nav link).
  */
 export const showPricing = true;
 
 export interface Feature {
   title: string;
   body: string;
+  /** Key of the `icons` record in `Icon.astro`. */
+  icon: string;
 }
 
 export const features: Feature[] = [
   {
     title: "Ephemeral by design",
     body: "Spin up an isolated copy of your whole stack per branch, dev, or demo — destroy it when done.",
+    icon: "timer",
   },
   {
     title: "Preview URL per instance",
     body: "Every service gets {instance}-{service}.your-domain with wildcard TLS via built-in ingress.",
+    icon: "globe",
   },
   {
     title: "Compose-native templates",
     body: "Service templates are the Compose YAML you already write. No new DSL to learn.",
+    icon: "file-code",
   },
   {
     title: "Multi-runtime",
     body: "Target local or remote Docker daemons over mTLS. Spread instances across hosts.",
+    icon: "server",
   },
   {
     title: "Template catalog",
     body: "Import ready-made services — Postgres, Redis, RabbitMQ, Keycloak, Mailpit and more.",
+    icon: "grid",
   },
   {
     title: "Git value sources",
     body: "Pull config values straight from your repos, so environments track your branches.",
+    icon: "git-branch",
   },
 ];
 
@@ -72,36 +79,112 @@ export const steps: Step[] = [
 export interface Tier {
   name: string;
   price: string;
+  /** Billing unit, shown next to the price. Empty on the free tier. */
+  priceNote: string;
   body: string;
+  /** The caps that define the tier — rendered as a compact spec list. */
+  limits: string[];
+  /** What the tier unlocks. Paid tiers read as "everything above, plus". */
+  features: string[];
+  support: string;
   cta: string;
+  ctaHref: string;
   ctaVariant: "primary" | "secondary";
-  /** Emphasized tier gets a 2px dark border. */
+  /** Emphasized tier gets a 2px brand border. */
   emphasized: boolean;
 }
 
+/**
+ * Tiers, caps and prices come from fadebox's business-model design note
+ * (`fadebox/docs/design/business-model.md`, §Decision 1 and §Decision 2).
+ * Open core with an offline licence key: the free tier is the whole product
+ * with caps, and the billing unit is the installation — never the seat.
+ */
 export const tiers: Tier[] = [
   {
-    name: "Free",
-    price: "$0",
-    body: "Self-hosted core. Unlimited instances on your own hardware.",
+    name: "Community",
+    price: "€0",
+    priceNote: "",
+    body: "The whole product with caps — not a crippled build. Everything runs offline on your own hardware.",
+    limits: [
+      "5 users, plus 3 service accounts for CI",
+      "1 runtime · 5 concurrent instances",
+      "Unlimited projects, environments and templates",
+    ],
+    features: ["Full template catalog", "Compose-native templates", "API keys for CI pipelines"],
+    support: "Community support",
     cta: "Install",
+    ctaHref: links.install,
     ctaVariant: "secondary",
     emphasized: false,
   },
   {
     name: "Team",
-    price: "TBD",
-    body: "SSO, RBAC, multiple projects, priority support.",
-    cta: "Contact us",
+    price: "€990",
+    priceNote: "per year, per installation",
+    body: "For teams running previews across a few hosts. Adding developers never changes the bill.",
+    limits: [
+      "Unlimited users and service accounts",
+      "5 runtimes · 50 concurrent instances",
+    ],
+    features: [
+      "Remote runtimes over mTLS",
+      "Private registry credentials",
+      "Git value sources",
+      "Project RBAC — groups and dynamic roles",
+      "OIDC single sign-on",
+    ],
+    support: "Email support, next business day",
+    cta: "Get a licence",
+    ctaHref: links.contact,
     ctaVariant: "primary",
     emphasized: true,
   },
   {
     name: "Enterprise",
-    price: "Custom",
-    body: "Air-gapped installs, audit, SLAs. Talk to us about your model.",
+    price: "€2,990",
+    priceNote: "per year, per installation",
+    body: "For a fleet of runtimes, an identity provider to integrate with, and auditors to answer to.",
+    limits: ["Unlimited runtimes", "Unlimited concurrent instances"],
+    features: [
+      "IdP group → role mapping, SCIM",
+      "Audit log",
+      "Secret encryption at rest / KMS",
+      "Air-gapped licensing",
+    ],
+    support: "SLA with a named contact",
     cta: "Talk to sales",
+    ctaHref: links.contact,
     ctaVariant: "secondary",
     emphasized: false,
+  },
+];
+
+export interface LicenceNote {
+  title: string;
+  body: string;
+}
+
+/**
+ * The licensing promises from `business-model.md` §Decision 3 — the part that
+ * differentiates fadebox from metered competitors, so it belongs on the page
+ * rather than buried in a EULA.
+ */
+export const licenceNotes: LicenceNote[] = [
+  {
+    title: "No phone-home, ever",
+    body: "A licence is a signed file you paste in. Verification is a local signature check — nothing leaves your host, including in air-gapped installs.",
+  },
+  {
+    title: "Priced per installation",
+    body: "One flat annual number, not a per-seat calculation. Give everyone an account; the bill stays the same.",
+  },
+  {
+    title: "Your instances are never held hostage",
+    body: "Caps are checked when you create or deploy. Running instances are never stopped — not on overage, not on expiry.",
+  },
+  {
+    title: "Expiry stops updates, not features",
+    body: "The version you paid for keeps every feature, forever. Lapsing means falling behind on releases, not a broken environment.",
   },
 ];

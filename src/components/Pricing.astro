@@ -1,29 +1,71 @@
 ---
-import { tiers } from "../data/landing";
+import { tiers, licenceNotes } from "../data/landing";
 ---
 
 <section id="pricing" class="section container pricing">
   <div class="section-head centered">
     <h2 class="heading">Pricing</h2>
-    <p class="sub">Placeholder tiers — final model TBD.</p>
+    <p class="sub">
+      One flat price per installation, per year. Not per developer — adding
+      people to fadebox never changes what you pay.
+    </p>
   </div>
+
   <div class="grid">
     {
-      tiers.map((t) => (
+      tiers.map((t, i) => (
         <div class:list={["card", { emphasized: t.emphasized }]}>
           <h3 class="name">{t.name}</h3>
-          <div class="price">{t.price}</div>
+          <div class="price-row">
+            <span class="price">{t.price}</span>
+            {t.priceNote && <span class="price-note">{t.priceNote}</span>}
+          </div>
           <p class="body">{t.body}</p>
+
+          <ul class="limits">
+            {t.limits.map((l) => (
+              <li>{l}</li>
+            ))}
+          </ul>
+
+          <p class="features-head">
+            {i === 0 ? "Includes" : `Everything in ${tiers[i - 1].name}, plus`}
+          </p>
+          <ul class="features">
+            {t.features.map((f) => (
+              <li>{f}</li>
+            ))}
+          </ul>
+
+          <p class="support">{t.support}</p>
+
           <a
             class:list={[
               "btn",
               t.ctaVariant === "primary" ? "btn-primary" : "btn-secondary",
               "cta",
             ]}
-            href="#cta"
+            href={t.ctaHref}
           >
             {t.cta}
           </a>
+        </div>
+      ))
+    }
+  </div>
+
+  <p class="fineprint">
+    Prices exclude VAT. Community needs no licence key at all — install and run.
+    Fadebox is source-available under the Elastic License 2.0: you can read
+    every line of what runs on your host.
+  </p>
+
+  <div class="notes">
+    {
+      licenceNotes.map((n) => (
+        <div class="note">
+          <h3 class="note-title">{n.title}</h3>
+          <p class="note-body">{n.body}</p>
         </div>
       ))
     }
@@ -39,7 +81,8 @@ import { tiers } from "../data/landing";
   .centered {
     text-align: center;
     align-items: center;
-    max-width: none;
+    max-width: 640px;
+    margin: 0 auto;
   }
   .heading {
     font-size: 32px;
@@ -47,6 +90,7 @@ import { tiers } from "../data/landing";
   }
   .sub {
     font-size: 16px;
+    line-height: 1.6;
     color: var(--muted);
     margin: 0;
   }
@@ -54,9 +98,10 @@ import { tiers } from "../data/landing";
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
-    max-width: 960px;
+    max-width: 1020px;
     margin: 0 auto;
     width: 100%;
+    align-items: stretch;
   }
   .card {
     border: 1px solid var(--border);
@@ -74,14 +119,76 @@ import { tiers } from "../data/landing";
     font-size: 18px;
     font-weight: 700;
   }
+  /* Price and its billing unit share a baseline so the three cards line up
+     even though only the paid tiers carry a note. */
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 38px;
+  }
   .price {
     font-size: 30px;
     font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .price-note {
+    font-size: 13px;
+    color: var(--muted);
   }
   .body {
     font-size: 14px;
     line-height: 1.5;
     color: var(--muted);
+    margin: 0;
+  }
+  .limits,
+  .features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  /* Caps read as a spec sheet: bordered block, no bullets. */
+  .limits {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+    font-weight: 600;
+  }
+  .features-head {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0;
+  }
+  .features li {
+    position: relative;
+    padding-left: 20px;
+    color: var(--muted);
+  }
+  .features li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 5px;
+    width: 9px;
+    height: 5px;
+    border-left: 2px solid var(--brand);
+    border-bottom: 2px solid var(--brand);
+    transform: rotate(-45deg);
+  }
+  /* Pushes the CTA to the card bottom so all three buttons align. */
+  .support {
+    font-size: 13px;
+    color: var(--faint);
     margin: 0;
     flex: 1;
   }
@@ -94,10 +201,53 @@ import { tiers } from "../data/landing";
   .cta.btn-secondary {
     border-color: var(--ink);
   }
+  .fineprint {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--faint);
+    text-align: center;
+    max-width: 620px;
+    margin: -16px auto 0;
+  }
+  .notes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding-top: 36px;
+    border-top: 1px solid var(--border);
+  }
+  .note {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .note-title {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .note-body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  @media (max-width: 980px) {
+    .notes {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px 24px;
+    }
+  }
 
   @media (max-width: 720px) {
     .grid {
       grid-template-columns: 1fr;
+    }
+    .notes {
+      grid-template-columns: 1fr;
+    }
+    .support {
+      flex: none;
     }
   }
 </style>
