@@ -99,6 +99,13 @@ export interface Tier {
  * (`fadebox/docs/design/business-model.md`, §Decision 1 and §Decision 2).
  * Open core with an offline licence key: the free tier is the whole product
  * with caps, and the billing unit is the installation — never the seat.
+ *
+ * Team is finite on both axes, Enterprise unlimited on both. Runtimes carry
+ * the price — they track how large a customer is; instances per runtime is a
+ * published second rung, set commercially. Neither number is derived from a
+ * technical ceiling: licence limits express what we sell, and host limits are
+ * an operations concern. What earns Enterprise is the compliance feature set,
+ * not a bigger counter.
  */
 export const tiers: Tier[] = [
   {
@@ -107,11 +114,16 @@ export const tiers: Tier[] = [
     priceNote: "",
     body: "The whole product with caps — not a crippled build. Everything runs offline on your own hardware.",
     limits: [
+      "1 runtime · 5 concurrent instances on it",
       "5 users, plus 3 service accounts for CI",
-      "1 runtime · 5 concurrent instances",
       "Unlimited projects, environments and templates",
     ],
-    features: ["Full template catalog", "Compose-native templates", "API keys for CI pipelines"],
+    features: [
+      "Local or remote Docker host over mTLS",
+      "Full template catalog",
+      "Compose-native templates",
+      "API keys for CI pipelines",
+    ],
     support: "Community support",
     cta: "Install",
     ctaHref: links.install,
@@ -122,13 +134,12 @@ export const tiers: Tier[] = [
     name: "Team",
     price: "€990",
     priceNote: "per year, per installation",
-    body: "For teams running previews across a few hosts. Adding developers never changes the bill.",
+    body: "For teams spreading previews across a few Docker hosts. Adding developers never changes the bill.",
     limits: [
+      "5 runtimes · 20 concurrent instances per runtime",
       "Unlimited users and service accounts",
-      "5 runtimes · 50 concurrent instances",
     ],
     features: [
-      "Remote runtimes over mTLS",
       "Private registry credentials",
       "Git value sources",
       "Project RBAC — groups and dynamic roles",
@@ -144,13 +155,16 @@ export const tiers: Tier[] = [
     name: "Enterprise",
     price: "€2,990",
     priceNote: "per year, per installation",
-    body: "For a fleet of runtimes, an identity provider to integrate with, and auditors to answer to.",
-    limits: ["Unlimited runtimes", "Unlimited concurrent instances"],
+    body: "For a fleet of hosts, an identity provider to integrate with, and a security review to pass.",
+    limits: [
+      "Unlimited runtimes · unlimited concurrent instances",
+      "Unlimited users and service accounts",
+    ],
     features: [
       "IdP group → role mapping, SCIM",
       "Audit log",
       "Secret encryption at rest / KMS",
-      "Air-gapped licensing",
+      "Air-gapped licence issuance",
     ],
     support: "SLA with a named contact",
     cta: "Talk to sales",
