@@ -20,7 +20,8 @@ const base = import.meta.env.BASE_URL;
     display: flex;
     gap: 32px;
     align-items: center;
-    padding: 28px 0;
+    /* padding-block, not the shorthand — .footer is also a .container. */
+    padding-block: 28px;
     border-top: 1px solid var(--border);
     font-size: 13px;
     color: var(--faint);

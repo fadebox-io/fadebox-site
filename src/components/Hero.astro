@@ -30,7 +30,8 @@ import Screenshot from "./Screenshot.astro";
     align-items: center;
     text-align: center;
     gap: 20px;
-    padding: 88px 0 64px;
+    /* padding-block, not the shorthand — .hero is also a .container. */
+    padding-block: 88px 64px;
   }
   .badge {
     font-size: 12px;
@@ -74,7 +75,7 @@ import Screenshot from "./Screenshot.astro";
 
   @media (max-width: 720px) {
     .hero {
-      padding: 56px 0 48px;
+      padding-block: 56px 48px;
     }
     .title {
       font-size: 38px;

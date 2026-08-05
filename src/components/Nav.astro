@@ -23,8 +23,8 @@ const base = import.meta.env.BASE_URL;
     display: flex;
     align-items: center;
     gap: 32px;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    /* padding-block, not the shorthand — .nav is also a .container. */
+    padding-block: 20px;
     border-bottom: 1px solid var(--border);
   }
   .brand {
