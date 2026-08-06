@@ -40,7 +40,8 @@ phone-home — a fresh installation works fully offline.
 - **Template catalog** — curated, ready-to-import templates ship inside the app (PostgreSQL,
   MariaDB, Redis, RabbitMQ, Keycloak — standalone or PostgreSQL-backed, pgAdmin, Mailpit and a
   `whoami` demo). Import copies an entry into an editable template, globally or into one project,
-  with version provenance.
+  under a name of your choosing (so the same entry can land twice in one scope), with version
+  provenance.
 - **[Compose-native authoring](guides/template-authoring.md)** — templates are the Compose subset
   teams already know, including `depends_on` conditions, healthchecks and resource limits. Ad-hoc
   **test runs** let authors verify a template before wiring it into an environment.
@@ -49,8 +50,10 @@ phone-home — a fresh installation works fully offline.
 - **[Private registries](guides/private-registries.md)** — a project holds the logins its own
   images pull with, so private images deploy onto a host nobody primed by hand. A runtime can also
   hold host-wide logins for a pull-through mirror; the project's win where both cover a registry.
-- **Configs** — named, shared parameterizations of an environment: per-service image tags and
-  environment-variable overrides. An instance resolves its config fresh on every deploy.
+- **Environments own their versions** — per-service image tags are part of the environment
+  definition, and an instance resolves that definition fresh on every deploy. A second version
+  stream is a **clone** of the environment (`dev`, `dev-v2`) — named and visible in the list, not
+  hidden in per-instance parameters.
 - **[Git value sources](guides/git-value-sources.md)** — environment variables **and image tags**
   can reference values inside files of a per-project git repository
   (`{{git:app-repo:deploy/values.yaml#$.image.tag}}`, JSONPath over YAML/JSON), resolved fresh on

@@ -73,6 +73,12 @@ Importing an entry **copies** it into an ordinary, editable template — globall
 your choice at import time. There is no live coupling: the copy records which catalog entry and
 version it came from, and nothing about it ever changes on its own.
 
+The copy's **name and slug are yours to set** in the import dialog; they default to the entry's.
+Since template names are unique per scope, renaming is what lets one entry land twice in the same
+scope — import PostgreSQL as `postgres` and again as `postgres-analytics`, tune each copy
+separately. Provenance still records the entry either way, so a renamed copy remains recognisable
+as a copy of it.
+
 ## Next
 
 - [Authoring a template](../guides/template-authoring.md) — the supported Compose subset, injected

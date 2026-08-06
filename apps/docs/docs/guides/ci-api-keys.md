@@ -13,7 +13,7 @@ project maintainer on the project page (or via the API).
 account's roles and project memberships, like a signed-in user.
 
 - Creating a key from a project grants the account a project role there (default `deployer` — the
-  full instance lifecycle: create, deploy, stop, delete, status, logs, configs).
+  full instance lifecycle: create, deploy, stop, delete, status, logs).
 - A maintainer may only issue or revoke keys for accounts whose entire authority they could have
   granted a colleague — an account with a global role (say `template_admin` for a CI job that
   manages templates) or memberships in other projects is issued its keys by an admin.

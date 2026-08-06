@@ -23,7 +23,9 @@ the runtime and shows their status. Leave HTTPS off for a local try-out; for a r
 *Catalog*. Import **Whoami (demo)** — a tiny HTTP echo service that exists precisely to prove
 routing works — and **PostgreSQL** if you want something with a healthcheck to watch.
 
-Import copies the entry into an ordinary, editable template. Choose **global** scope for now.
+Import copies the entry into an ordinary, editable template, under a name and slug you can change
+in the dialog — renaming is how the same entry is imported twice into one scope. Keep the
+suggested names and choose **global** scope for now.
 
 ## 3. Create a project
 
@@ -71,6 +73,6 @@ Stop one, redeploy it, throw it away. Deleting requires stopping first.
 
 - **[Author your own template](../guides/template-authoring.md)** — the Compose subset, the ingress
   directives, injected files and instance placeholders.
-- **[Configs](../concepts/environments.md#configs)** — parameterize the environment with per-service
-  image tags instead of editing it per deploy.
+- **[Versions and cloning](../concepts/environments.md#versions-live-on-the-environment)** — pin
+  per-service image tags on the environment, and clone it for a second version stream.
 - **[Automate it](../guides/cli.md)** — the same flow from a pipeline, in one command.
