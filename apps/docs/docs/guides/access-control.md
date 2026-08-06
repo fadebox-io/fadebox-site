@@ -1,0 +1,88 @@
+---
+title: Users, groups and roles
+---
+
+Fadebox has two kinds of role. **Global roles** are platform-wide and live on the user account.
+**Project roles** apply inside one project and are granted through **groups**.
+
+## Global roles
+
+| Role | What it allows |
+| --- | --- |
+| `user` | The baseline every account has. On its own it grants no access to any project — you see only what a project role gives you. |
+| `template_admin` | Create, edit and delete templates, and start template test runs. |
+| `admin` | Everything. Manages users, groups, identity providers and runtimes; creates and deletes projects; and **bypasses project roles** — an admin has full authority in every project. |
+
+Admins assign global roles under *Users*. New accounts — including those auto-provisioned by an
+[OIDC provider](oidc-sso.md) — start as `user`.
+
+## Project roles
+
+Inside a project the roles are hierarchical: **maintainer ⊃ deployer ⊃ viewer**. Holding
+`maintainer` implies everything `deployer` may do, which implies everything `viewer` may do.
+
+| | viewer | deployer | maintainer |
+| --- | :---: | :---: | :---: |
+| See the project, its environments and instances | ● | ● | ● |
+| Read repositories and registry entries | ● | ● | ● |
+| Create, deploy, stop and delete instances | | ● | ● |
+| Read instance status and logs | ● | ● | ● |
+| Read and manage configs | | ● | ● |
+| Create and edit environments, add/remove services, set waves | | | ● |
+| Manage git repositories and registry credentials | | | ● |
+| Manage members and API keys | | | ● |
+
+Creating a project is a global-admin act — you cannot be a member of a project that does not exist
+yet. The admin who creates one is seeded into its maintainers, so they can run it afterwards
+without using their global role.
+
+## Groups are how project roles are granted
+
+A **group** is a set of people. What a group *grants* is a set of edges of the form "every member
+of this group holds *role* in *project*". Users are never granted a project role directly — the
+grant always runs through a group, which is what makes an org-wide directory usable as the source
+of truth.
+
+Membership comes from one of two places:
+
+- **Manual** — an admin adds the user to the group.
+- **A claim mapping** — an OIDC sign-in whose group claim carried a value the group maps.
+
+### Two ways to work with the same machinery
+
+**From the project** — *Project → Settings → Members*. A maintainer adds a colleague and picks a
+role. Behind the scenes the project owns a canonical group per role, and the member is added to it;
+you never have to think about groups to run a project. Rows that came from a shared org group or
+from an SSO sync appear here read-only — revoking them belongs where they were granted.
+
+**From the platform** — *Access → Groups*, as an admin. This is where you create groups that span
+projects (`platform-team`, `qa`), give them roles in several projects at once, and attach claim
+mappings.
+
+## Mapping identity-provider groups
+
+A claim mapping puts everyone whose token carries a given value into a Fadebox group.
+
+A mapping always names **which provider** asserted the value. This matters: a bare claim value
+would be global, so `engineering` emitted by a contractor's directory would land in the same group
+as `engineering` from your corporate one — and that group carries project role grants. Scoping the
+match to the provider the token was verified against means an outside directory administrator
+cannot mint membership in your groups.
+
+A group with no claim mappings can only be filled by hand, which includes every canonical group a
+project's Members view creates. The invariant throughout: **a claim can only place you in a group
+an admin defined, and only an admin decides what that group grants.**
+
+:::note
+
+Group membership from a sign-in is recomputed on each request of a signed-in SSO user, so removing
+someone from a directory group takes effect on their next request — you do not have to wait for a
+session to expire.
+
+:::
+
+## Service accounts
+
+CI pipelines authenticate as **service accounts**: accounts with roles and memberships like anyone
+else, but with no password and no interactive sign-in. They hold
+[API keys](ci-api-keys.md) instead.
