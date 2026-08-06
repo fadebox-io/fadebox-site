@@ -74,9 +74,14 @@ a:hover {
   padding: 0 var(--page-pad);
 }
 
-/* Section rhythm: 64px vertical padding, 1px top borders between sections. */
+/*
+ * Section rhythm: 64px vertical padding, 1px top borders between sections.
+ * Vertical padding is set with `padding-block` on purpose — sections are also
+ * `.container`s, and the `padding` shorthand would reset the side padding
+ * that keeps text off the screen edge on narrow viewports.
+ */
 .section {
-  padding: 64px 0;
+  padding-block: 64px;
   border-top: 1px solid var(--border);
 }
 
