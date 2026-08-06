@@ -1,35 +1,41 @@
 name: Deploy Site
 
-# Builds the Astro site and deploys it to this repository's GitHub Pages,
-# served at https://hlavki.github.io/fadebox-site/. Uses the official
-# first-party Pages actions with OIDC — no secrets or deploy keys to manage.
+# Builds the landing page (Astro, apps/landing) and the docs (Docusaurus,
+# apps/docs) and deploys them together to this repository's GitHub Pages: the
+# docs build output is copied into the landing's dist under /docs, so one
+# artifact serves https://hlavki.github.io/fadebox-site/ with the docs at
+# https://hlavki.github.io/fadebox-site/docs/. Uses the official first-party
+# Pages actions with OIDC — no secrets or deploy keys to manage.
+#
+# Pull requests run the build without deploying — Docusaurus is configured to
+# fail on broken links, so the build doubles as the docs link check.
 #
 # One-time setup (no secret needed):
 #   hlavki/fadebox-site → Settings → Pages → Source: "GitHub Actions".
 #
 # To later switch to the fadebox.dev custom domain: set base back to '/' in
-# astro.config.mjs, re-add public/CNAME (fadebox.dev), and set the custom
-# domain in Settings → Pages with DNS pointed at GitHub Pages.
+# apps/landing/astro.config.mjs, set url/baseUrl accordingly in
+# apps/docs/docusaurus.config.ts, re-add apps/landing/public/CNAME
+# (fadebox.dev), and set the custom domain in Settings → Pages with DNS
+# pointed at GitHub Pages.
 
 on:
   push:
     branches: [master]
+  pull_request:
   workflow_dispatch:
 
-# OIDC-based deploy: read the repo, write to Pages, mint the id-token. No secret.
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Serialize deploys; a newer push cancels an in-flight one.
+# Serialize deploys; a newer push cancels an in-flight one. PRs get their own
+# group via head_ref, so a PR build never cancels a master deploy.
 concurrency:
-  group: pages
+  group: pages-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,17 +54,25 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build site
+      - name: Build landing and docs
         run: pnpm build
+
+      - name: Merge docs into the site
+        run: cp -r apps/docs/build apps/landing/dist/docs
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: apps/landing/dist
 
   deploy:
+    # Build-only on pull requests; deploy from master pushes and manual runs.
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
