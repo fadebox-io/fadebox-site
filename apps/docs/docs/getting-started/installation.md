@@ -51,12 +51,6 @@ services:
       QUARKUS_DATASOURCE_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
       # Session-cookie encryption key; generate with `openssl rand -base64 32`.
       QUARKUS_HTTP_AUTH_SESSION_ENCRYPTION_KEY: "${FADEBOX_SESSION_KEY:?set FADEBOX_SESSION_KEY in .env}"
-      # Optional OIDC single sign-on (form login keeps working alongside):
-      # QUARKUS_OIDC_TENANT_ENABLED: "true"
-      # QUARKUS_OIDC_AUTH_SERVER_URL: https://idp.example.com/realms/acme
-      # QUARKUS_OIDC_CLIENT_ID: fadebox
-      # QUARKUS_OIDC_CREDENTIALS_SECRET: change-me
-      # FADEBOX_SECURITY_OIDC_PROVIDER_NAME: Acme SSO
       # Bare-clone cache for git value sources (kept on a volume so fetches stay incremental)
       FADEBOX_GIT_CACHE_DIR: /data/git
     volumes:
@@ -105,18 +99,21 @@ docker compose logs app | grep "generated password"
 
 Sign in and change it.
 
-## 5. First ten minutes
-
-- *Settings → Runtimes* — the `local` runtime is preconfigured. To enable URLs for your
-  environments, set an ingress domain (any wildcard DNS record pointing at the host; for a local
-  try-out, `localtest.me` works with zero DNS setup) and click **Install** on the ingress stack.
-- *Catalog* — import a template or two (the whoami demo is made for a first test).
-- Create a project, compose an environment from templates, create an instance, **Deploy** — and
-  open its URL from the instance status panel.
-
 :::warning
 
 Fadebox's app container mounts `/var/run/docker.sock` — managing a Docker daemon is effectively
 root on that host, so treat Fadebox admin access accordingly.
 
 :::
+
+## Next
+
+[Deploy your first environment](first-environment.md) — ingress domain, a template from the
+catalog, and a running URL.
+
+Optional, whenever you need them:
+
+- [Single sign-on](../guides/oidc-sso.md) against your identity provider, configured in the UI.
+- [Users, groups and roles](../guides/access-control.md) for anything beyond the bootstrap admin.
+- [Configuration reference](../reference/configuration.md) for the environment variables the app
+  understands.
