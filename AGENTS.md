@@ -1,14 +1,37 @@
+# fadebox-site
+
+pnpm workspace with two apps, deployed together to GitHub Pages (see README.md):
+
+- `apps/landing/` — landing page, Astro. Content lives in `src/data/landing.ts`.
+- `apps/docs/` — product docs, Docusaurus. Content in `docs/`, config in `docusaurus.config.ts`.
+
+The deploy workflow merges the docs build into the landing's `dist/docs`; both are served from one
+origin (`/fadebox-site/`, docs under `/fadebox-site/docs/`). Keep `base`/`baseUrl` in the two app
+configs consistent when touching either.
+
 ## Development
 
-When starting the dev server, use background mode:
+Landing dev server — use background mode:
 
 ```
-astro dev --background
+cd apps/landing && astro dev --background
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+Manage it with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
-## Documentation
+Docs dev server: `pnpm dev:docs` (from the root).
+
+## Docs conventions
+
+- `apps/docs/docs/` documents the next (unreleased) Fadebox version. Released versions are
+  snapshotted with `docusaurus docs:version X.Y` in the release PR — never edit `versioned_docs/`
+  except to fix docs of an already-released version.
+- Broken links fail the build (`onBrokenLinks: 'throw'`); link between pages by relative `.md` file
+  path so links survive version snapshots.
+- The Fadebox code repo is private — never link into `github.com/hlavki/fadebox`; inline what the
+  docs need (as the installation page does with the compose file).
+
+## Astro documentation
 
 Full documentation: https://docs.astro.build
 

@@ -1,4 +1,9 @@
+packages:
+  - apps/*
 allowBuilds:
+  '@swc/core': true
+  # core-js's postinstall only prints a funding banner — no build needed.
+  core-js: false
   esbuild: true
   sharp: true
 minimumReleaseAgeExclude:

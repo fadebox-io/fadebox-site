@@ -1,43 +1,40 @@
-# Astro Starter Kit: Minimal
+# fadebox-site
 
-```sh
-pnpm create astro@latest -- --template minimal
+The public web presence of [Fadebox](https://hlavki.github.io/fadebox-site/): the landing page and
+the product documentation, deployed together to GitHub Pages.
+
+## Layout
+
+A pnpm workspace with two apps:
+
+- `apps/landing/` — the landing page (Astro), served at the site root.
+- `apps/docs/` — the product documentation (Docusaurus), served under `/docs/`.
+
+The deploy workflow (`.github/workflows/deploy.yml`) builds both, copies the docs build into the
+landing's `dist/docs`, and publishes the merged output as one Pages artifact. Pull requests run the
+same build without deploying; Docusaurus fails the build on broken links, so PR CI doubles as the
+docs link check.
+
+## Commands
+
+All from the repo root:
+
+| Command          | Action                                              |
+| :--------------- | :-------------------------------------------------- |
+| `pnpm install`   | Install dependencies for both apps                  |
+| `pnpm dev`       | Landing dev server (`localhost:4321`)               |
+| `pnpm dev:docs`  | Docs dev server (`localhost:3000`)                  |
+| `pnpm build`     | Build both apps (`apps/*/dist`, `apps/docs/build`)  |
+
+## Docs versioning
+
+`apps/docs/docs/` documents the **next** (unreleased) Fadebox version and tracks master. When a
+Fadebox minor version is released, snapshot it in a reviewable PR:
+
+```bash
+pnpm --filter fadebox-docs docusaurus docs:version 1.0
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Patch-level doc fixes for a released version are edited directly under
+`apps/docs/versioned_docs/version-X.Y/`. Before the first release, no versions are cut and the
+current docs serve at `/docs/` directly.

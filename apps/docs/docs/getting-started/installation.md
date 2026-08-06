@@ -1,0 +1,122 @@
+---
+title: Installation
+slug: /install
+---
+
+All you need on the host is Docker with the Compose plugin. Fadebox runs as two containers: the app
+and a PostgreSQL database.
+
+## 1. Create the compose file
+
+Save this as `docker-compose.yml`:
+
+```yaml
+# Fadebox — app + PostgreSQL. Create .env next to this file first (step 2).
+#
+# Nothing host-specific is baked in here: the Docker socket path and the GID that owns it
+# come from .env, because they differ per host (docker group on Linux, root on Docker
+# Desktop, your own uid under rootless Docker).
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: fadebox
+      POSTGRES_USER: fadebox
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    ports:
+      - "5432:5432"
+    volumes:
+      # PG18 images store data in a version-specific subdir under /var/lib/postgresql
+      - fadebox-db:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U fadebox -d fadebox" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: ghcr.io/hlavki/fadebox:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    # The image's own uid (185, UBI convention); only the supplementary group varies per host.
+    user: "${FADEBOX_UID:-185}:${FADEBOX_GID:-0}"
+    group_add:
+      # GID that owns the Docker socket — see step 2 for how to find it.
+      - "${DOCKER_GID:?set DOCKER_GID in .env}"
+    environment:
+      # Point the baked-in postgres datasource at the db service.
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://db:5432/fadebox
+      QUARKUS_DATASOURCE_USERNAME: fadebox
+      QUARKUS_DATASOURCE_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      # Session-cookie encryption key; generate with `openssl rand -base64 32`.
+      QUARKUS_HTTP_AUTH_SESSION_ENCRYPTION_KEY: "${FADEBOX_SESSION_KEY:?set FADEBOX_SESSION_KEY in .env}"
+      # Optional OIDC single sign-on (form login keeps working alongside):
+      # QUARKUS_OIDC_TENANT_ENABLED: "true"
+      # QUARKUS_OIDC_AUTH_SERVER_URL: https://idp.example.com/realms/acme
+      # QUARKUS_OIDC_CLIENT_ID: fadebox
+      # QUARKUS_OIDC_CREDENTIALS_SECRET: change-me
+      # FADEBOX_SECURITY_OIDC_PROVIDER_NAME: Acme SSO
+      # Bare-clone cache for git value sources (kept on a volume so fetches stay incremental)
+      FADEBOX_GIT_CACHE_DIR: /data/git
+    volumes:
+      - ${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock
+      - fadebox-git:/data
+    ports:
+      - "${FADEBOX_PORT:-8080}:8080"
+
+volumes:
+  fadebox-db:
+  fadebox-git:
+```
+
+## 2. Create `.env`
+
+Nothing host-specific is baked into the compose file, so it reads these from `.env` next to it
+(compose fails fast with a named variable if one is missing):
+
+```bash
+{
+  echo "DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)"   # macOS: stat -f '%g'
+  echo "FADEBOX_SESSION_KEY=$(openssl rand -base64 32)"
+  echo "DB_PASSWORD=$(openssl rand -base64 24)"
+} >> .env
+```
+
+`DOCKER_GID` is the group that owns the Docker socket — `docker` on most Linux hosts, `0` on Docker
+Desktop, your own gid under rootless Docker (which also needs
+`DOCKER_SOCK=/run/user/$UID/docker.sock`). The app container keeps its own uid and just joins that
+group; without it, every deploy fails with `permission denied` on `/var/run/docker.sock`.
+
+## 3. Start it
+
+```bash
+docker compose up -d
+```
+
+## 4. Sign in
+
+Open `http://localhost:8080`. The initial `admin` user's generated password is printed once in the
+log:
+
+```bash
+docker compose logs app | grep "generated password"
+```
+
+Sign in and change it.
+
+## 5. First ten minutes
+
+- *Settings → Runtimes* — the `local` runtime is preconfigured. To enable URLs for your
+  environments, set an ingress domain (any wildcard DNS record pointing at the host; for a local
+  try-out, `localtest.me` works with zero DNS setup) and click **Install** on the ingress stack.
+- *Catalog* — import a template or two (the whoami demo is made for a first test).
+- Create a project, compose an environment from templates, create an instance, **Deploy** — and
+  open its URL from the instance status panel.
+
+:::warning
+
+Fadebox's app container mounts `/var/run/docker.sock` — managing a Docker daemon is effectively
+root on that host, so treat Fadebox admin access accordingly.
+
+:::
