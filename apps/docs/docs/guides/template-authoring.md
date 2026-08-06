@@ -79,8 +79,9 @@ are text, up to 1 MB, and land with mode `0644`.
 A target path underneath one of that service's volume mounts is rejected when you save it, because
 the volume would shadow the file the moment the container starts.
 
-A [config](../concepts/environments.md#configs) can supply a file at the same path to override a
-template file — configs reach the main service only.
+An [environment service](../concepts/environments.md#injected-files) can supply a file at the same
+path to override a template file — environment files are keyed by container too, so they reach a
+unit's helpers just like the template's own.
 
 ## Values only the instance knows
 

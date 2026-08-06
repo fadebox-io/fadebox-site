@@ -27,8 +27,7 @@ Inside a project the roles are hierarchical: **maintainer ⊃ deployer ⊃ viewe
 | Read repositories and registry entries | ● | ● | ● |
 | Create, deploy, stop and delete instances | | ● | ● |
 | Read instance status and logs | ● | ● | ● |
-| Read and manage configs | | ● | ● |
-| Create and edit environments, add/remove services, set waves | | | ● |
+| Create, edit and clone environments — services, waves, image tags, shared variables, files | | | ● |
 | Manage git repositories and registry credentials | | | ● |
 | Manage members and API keys | | | ● |
 

@@ -50,8 +50,9 @@ do interpolate inside a string.)
 
 ## Where references can be used
 
-- Environment variable values — on an environment service or in a config.
-- **Image tags** — in a config's per-service image tag override. The resolved value is checked
+- Environment variable values — service overrides and the environment's shared variables alike.
+- **Image tags** — in an [environment service's image
+  tag](../concepts/environments.md#versions-live-on-the-environment). The resolved value is checked
   against Docker's tag grammar, so a values file containing something unexpected fails the deploy
   instead of producing an unparseable image reference.
 
