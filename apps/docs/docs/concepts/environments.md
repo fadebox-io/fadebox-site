@@ -106,8 +106,12 @@ ordering fadebox would apply: plain YAML when it has no injected files, otherwis
 `docker-compose.yaml` plus the bind-mounted `files/`. Useful for review, and for running the same
 stack outside fadebox.
 
-Deploy-time references have no resolver outside fadebox, so `{{git:…}}` image tags and
-`{{service.*}}` values come out **verbatim**, under a header comment saying to replace them with
-literals before running the file — never silently substituted with something the environment
-didn't say. Verbatim output also keeps exports deterministic, which is what makes diffing one
-against a committed golden file a usable drift check.
+[Service references](../guides/template-authoring.md#values-another-service-owns) are
+**resolved in the export**: the environment's definition holds everything they need, so
+`{{service.db.host}}` comes out as `db` and `{{service.db.env.POSTGRES_PASSWORD}}` as the actual
+value — the exported file runs. What has no resolver outside fadebox — `{{git:…}}` image tags,
+instance placeholders, and a service reference whose provider is missing or whose value is itself
+such a placeholder — comes out **verbatim**, under a header comment saying to replace it with a
+literal before running the file, never silently substituted with something the environment didn't
+say. Output stays deterministic either way, which is what makes diffing an export against a
+committed golden file a usable drift check.
