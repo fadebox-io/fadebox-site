@@ -72,8 +72,12 @@ Three layers, merged at deploy time. Later layers win:
 3. **The environment service's overrides** — main service only, the last word.
 
 Values may also be
-[placeholders](../guides/template-authoring.md#values-only-the-instance-knows) resolved at deploy
-time, or [references into a git repository](../guides/git-value-sources.md).
+[instance placeholders](../guides/template-authoring.md#values-only-the-instance-knows),
+[references into a git repository](../guides/git-value-sources.md), or
+[references to sibling services](../guides/template-authoring.md#values-another-service-owns) —
+all resolved at deploy time, in that order. Service references resolve **last**, so a consumer
+always receives the provider's final value: a database password the provider takes from git
+reaches every service that references it already resolved.
 
 ## Injected files
 
@@ -101,3 +105,9 @@ An environment can be exported as a standalone Docker Compose project, with the 
 ordering fadebox would apply: plain YAML when it has no injected files, otherwise a zip of
 `docker-compose.yaml` plus the bind-mounted `files/`. Useful for review, and for running the same
 stack outside fadebox.
+
+Deploy-time references have no resolver outside fadebox, so `{{git:…}}` image tags and
+`{{service.*}}` values come out **verbatim**, under a header comment saying to replace them with
+literals before running the file — never silently substituted with something the environment
+didn't say. Verbatim output also keeps exports deterministic, which is what makes diffing one
+against a committed golden file a usable drift check.

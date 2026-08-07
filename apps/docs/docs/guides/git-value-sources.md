@@ -45,8 +45,12 @@ Repositories are per project. A reference can only name a repository of its own 
 
 The **whole value must be a single reference** — you cannot mix literal text and a `{{git:…}}`
 placeholder in one value, because the reference resolves to a scalar read out of a file. (The
-[instance placeholders](template-authoring.md#values-only-the-instance-knows) are different: those
-do interpolate inside a string.)
+[instance placeholders](template-authoring.md#values-only-the-instance-knows) and
+[service references](template-authoring.md#values-another-service-owns) are different: those do
+interpolate inside a string.)
+
+Git references resolve **before** service references, so the two compose: a provider whose
+password is a `{{git:…}}` reference hands consumers that reference the resolved scalar.
 
 ## Where references can be used
 

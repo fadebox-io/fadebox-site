@@ -104,6 +104,41 @@ Spelling matters: anything that looks like one of these placeholders but is not 
 `{{ instance.host }}` with spaces, say — **fails the deploy** instead of reaching the container as
 literal text. A typo in a callback URL should not become a running container.
 
+## Values another service owns
+
+A template that connects to a sibling — Keycloak to its database, an app to its cache — can
+reference that service instead of copying its values:
+
+| Placeholder | Resolves to |
+| --- | --- |
+| `{{service.<name>.host}}` | The in-instance hostname of environment service `<name>`. |
+| `{{service.<name>.env.<KEY>}}` | The effective value of env var `KEY` on that service's main container. |
+
+`<name>` is the service's name in the environment. The same rules as instance placeholders apply —
+interpolation inside strings, env values and injected files, malformed references fail the deploy —
+plus two of their own: referencing a service that is not in the environment **fails the deploy**
+with a message naming both sides (instead of a crash-loop at runtime), and references are **one
+level only** — a referenced value may not itself be a reference.
+
+The payoff is a single source of truth: override the provider's password once, at the environment
+level, and every consumer follows on the next deploy:
+
+```yaml
+KC_DB_URL: jdbc:postgresql://{{service.postgres.host}}:5432/{{service.postgres.env.POSTGRES_DB}}
+KC_DB_PASSWORD: "{{service.postgres.env.POSTGRES_PASSWORD}}"
+```
+
+Renamed the provider? Override the consumer's variable in the environment with a reference to the
+new name — the template stays untouched.
+
+Nobody has to write these from memory: the env editors that sit inside an environment (the
+composer's per-service overrides, and the add/edit-service drawers) have a **Service reference**
+builder next to the git one — pick a sibling service, then its hostname or one of its env vars,
+and the finished placeholder lands at the caret. The composer also **warns** when a service's
+template or overrides reference a name the environment doesn't have yet; the warning is
+non-blocking, because the deploy is the enforcement point and the missing service may simply not
+be added yet.
+
 ## Test runs
 
 Before wiring a template into an environment, run it on its own: *Test run* starts the unit ad hoc
@@ -112,6 +147,9 @@ on a runtime, with no project or environment involved, and shows container statu
 A test run is not persisted. Its containers are labelled and the daemon is the source of truth, so
 a run survives an app restart and stays stoppable. There is one test run per template, in the
 namespace `tpl-test-<template>`.
+
+A template that carries `{{service.*}}` references cannot test-run — the references need sibling
+services, and a test run deploys the template alone. Compose it into an environment instead.
 
 ## A worked example
 
