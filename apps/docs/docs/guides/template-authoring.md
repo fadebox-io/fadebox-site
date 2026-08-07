@@ -131,6 +131,14 @@ KC_DB_PASSWORD: "{{service.postgres.env.POSTGRES_PASSWORD}}"
 Renamed the provider? Override the consumer's variable in the environment with a reference to the
 new name — the template stays untouched.
 
+Nobody has to write these from memory: the env editors that sit inside an environment (the
+composer's per-service overrides, and the add/edit-service drawers) have a **Service reference**
+builder next to the git one — pick a sibling service, then its hostname or one of its env vars,
+and the finished placeholder lands at the caret. The composer also **warns** when a service's
+template or overrides reference a name the environment doesn't have yet; the warning is
+non-blocking, because the deploy is the enforcement point and the missing service may simply not
+be added yet.
+
 ## Test runs
 
 Before wiring a template into an environment, run it on its own: *Test run* starts the unit ad hoc
