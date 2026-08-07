@@ -66,8 +66,10 @@ see and pick — it never changes how a deployed instance resolves anything.
 ## The catalog
 
 Ready-made templates ship inside the application and are browsable under *Catalog* with no network
-access required: PostgreSQL, MariaDB, Redis, RabbitMQ, Keycloak (standalone or PostgreSQL-backed),
-pgAdmin, Mailpit and a `whoami` demo.
+access required — databases (PostgreSQL, MySQL, MariaDB, SQL Server, MongoDB, Redis), messaging
+(RabbitMQ, Kafka), Keycloak (standalone or PostgreSQL-backed), search and storage (OpenSearch,
+Elasticsearch, MinIO), cloud emulators (LocalStack, Azurite) and dev tools (WireMock, pgAdmin,
+Mailpit and a `whoami` demo).
 
 Importing an entry **copies** it into an ordinary, editable template — globally or into one project,
 your choice at import time. There is no live coupling: the copy records which catalog entry and
@@ -78,6 +80,40 @@ Since template names are unique per scope, renaming is what lets one entry land 
 scope — import PostgreSQL as `postgres` and again as `postgres-analytics`, tune each copy
 separately. Provenance still records the entry either way, so a renamed copy remains recognisable
 as a copy of it.
+
+### Well-known endpoints
+
+Catalog entries are built to connect to each other by convention. Inside an instance every
+container answers to its **service name**, so as long as you add a provider under its default
+name, any entry (or template of your own) can reach it at the address below — with the throwaway
+development credentials each entry ships:
+
+| Entry | Address | Credentials |
+|---|---|---|
+| PostgreSQL | `postgres:5432` | `postgres` / `postgres`, database `postgres` |
+| MySQL | `mysql:3306` | `root` / `root` — or `mysql` / `mysql`, database `app` |
+| MariaDB | `mariadb:3306` | `mariadb` / `mariadb` (root: `mariadb`), database `mariadb` |
+| SQL Server | `mssql:1433` | `sa` / `Passw0rd!` |
+| MongoDB | `mongodb:27017` | `mongo` / `mongo` |
+| Redis | `redis:6379` | no auth |
+| RabbitMQ | `rabbitmq:5672` | `guest` / `guest` |
+| Kafka | `kafka:9092` | plaintext, no auth |
+| Keycloak | `keycloak:8080` | admin `admin` / `admin` |
+| OpenSearch | `opensearch:9200` | security disabled |
+| Elasticsearch | `elasticsearch:9200` | security disabled |
+| MinIO | `minio:9000` (S3 API) | `minioadmin` / `minioadmin` |
+| LocalStack | `localstack:4566` | any AWS key pair |
+| Azurite | `azurite:10000/10001/10002` | standard `devstoreaccount1` account |
+| WireMock | `wiremock:8080` | — |
+| Mailpit | `mailpit:1025` (SMTP) | no auth |
+
+Renaming a service on add (or importing an entry under another slug) moves it off its well-known
+address — consumers that assume the convention, like Keycloak (PostgreSQL), then need their
+connection values overridden in the environment. Kafka is the strictest case: its advertised
+listener hardcodes `kafka`, so keep it under that name.
+
+These are development defaults, stated in each entry's description on purpose — override them at
+the environment level for anything shared or long-lived.
 
 ## Next
 
