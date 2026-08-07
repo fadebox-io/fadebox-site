@@ -118,9 +118,10 @@ Consumer entries carry
 connections — Keycloak (PostgreSQL) reaches its database as `{{service.postgres.host}}` and reads
 its credentials from the postgres service — so a missing provider fails the deploy with a message
 naming both sides, and overriding the provider's credentials rewires every consumer. Such entries
-declare their pairing: the catalog card shows a **pairs with** badge, and the import dialog
-reminds you to import the provider too and add both to the environment, the provider in an
-earlier wave. Renaming a
+declare their pairing: the catalog card shows a **pairs with** badge, and the import dialog says
+whether the scope already holds a copy of the provider — recognised by import provenance, so a
+renamed copy counts — or asks you to import it too. Importing it stays your move: nothing is ever
+imported implicitly. Add both to the environment, the provider in an earlier wave. Renaming a
 service on add (or importing an entry under another slug) moves it off its well-known address;
 override the consumer's references in the environment to point at the new name. Kafka is the
 strictest case: its advertised listener hardcodes `kafka`, so keep it under that name.
