@@ -107,10 +107,14 @@ development credentials each entry ships:
 | WireMock | `wiremock:8080` | — |
 | Mailpit | `mailpit:1025` (SMTP) | no auth |
 
-Renaming a service on add (or importing an entry under another slug) moves it off its well-known
-address — consumers that assume the convention, like Keycloak (PostgreSQL), then need their
-connection values overridden in the environment. Kafka is the strictest case: its advertised
-listener hardcodes `kafka`, so keep it under that name.
+Consumer entries carry
+[service references](../guides/template-authoring.md#values-another-service-owns) for these
+connections — Keycloak (PostgreSQL) reaches its database as `{{service.postgres.host}}` and reads
+its credentials from the postgres service — so a missing provider fails the deploy with a message
+naming both sides, and overriding the provider's credentials rewires every consumer. Renaming a
+service on add (or importing an entry under another slug) moves it off its well-known address;
+override the consumer's references in the environment to point at the new name. Kafka is the
+strictest case: its advertised listener hardcodes `kafka`, so keep it under that name.
 
 These are development defaults, stated in each entry's description on purpose — override them at
 the environment level for anything shared or long-lived.
