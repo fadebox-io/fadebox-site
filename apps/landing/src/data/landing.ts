@@ -83,14 +83,12 @@ export interface Tier {
   /** Billing unit, shown next to the price. Empty on the free tier. */
   priceNote: string;
   body: string;
-  /** The caps that define the tier — rendered as a compact spec list. */
-  limits: string[];
   /**
-   * What the tier unlocks, rendered as "everything above, plus" past the
-   * first card. Empty hides the block — Team adds scale, not features.
+   * The tier in one spec line. Deliberately the only detail on the card —
+   * features and support live in the comparison table below, so the cards
+   * stay short and equal-height.
    */
-  features: string[];
-  support: string;
+  caps: string;
   cta: string;
   ctaHref: string;
   ctaVariant: "primary" | "secondary";
@@ -118,20 +116,7 @@ export const tiers: Tier[] = [
     price: "€0",
     priceNote: "",
     body: "The whole product with caps — not a crippled build. Every feature, offline, on your own hardware.",
-    limits: [
-      "1 runtime · 5 concurrent instances on it",
-      "5 users, plus 3 service accounts for CI",
-      "Unlimited projects, environments and templates",
-    ],
-    features: [
-      "Private registry credentials",
-      "Git value sources",
-      "OIDC single sign-on, groups & project roles",
-      "Local or remote Docker hosts over mTLS",
-      "Full template catalog",
-      "API keys for CI pipelines",
-    ],
-    support: "Community support",
+    caps: "1 runtime · 5 instances · 5 users",
     cta: "Install",
     ctaHref: links.install,
     ctaVariant: "secondary",
@@ -141,13 +126,8 @@ export const tiers: Tier[] = [
     name: "Team",
     price: "€990",
     priceNote: "per year, per installation",
-    body: "The same product, more of it: five hosts, twenty previews on each, as many people as you have. Adding developers never changes the bill.",
-    limits: [
-      "5 runtimes · 20 concurrent instances per runtime",
-      "Unlimited users and service accounts",
-    ],
-    features: [],
-    support: "Email support, next business day",
+    body: "The same product, more of it. Adding developers never changes the bill.",
+    caps: "5 runtimes · 20 instances each · unlimited users",
     cta: "Get a licence",
     ctaHref: links.contact,
     ctaVariant: "primary",
@@ -158,17 +138,7 @@ export const tiers: Tier[] = [
     price: "€2,990",
     priceNote: "per year, per installation",
     body: "For a fleet of hosts, an identity provider to integrate with, and a security review to pass.",
-    limits: [
-      "Unlimited runtimes · unlimited concurrent instances",
-      "Unlimited users and service accounts",
-    ],
-    features: [
-      "IdP group → role mapping, SCIM",
-      "Audit log",
-      "Secret encryption at rest / KMS",
-      "Air-gapped licence issuance",
-    ],
-    support: "SLA with a named contact",
+    caps: "Unlimited everything · compliance features",
     cta: "Talk to sales",
     ctaHref: links.contact,
     ctaVariant: "secondary",
