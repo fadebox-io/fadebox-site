@@ -66,6 +66,17 @@ Providers themselves are database rows managed in the UI — see
 
 :::
 
+## Licensing
+
+Normally the license is pasted in **Settings → License** and stored in the database — see
+[Licensing](../guides/licensing.md). These exist for infrastructure-as-code installs; a pasted
+license takes precedence over either.
+
+| Variable | Default | What it does |
+| --- | --- | --- |
+| `FADEBOX_LICENSE` | *(unset)* | The license token itself. Unset means Community. |
+| `FADEBOX_LICENSE_PATH` | *(unset)* | Path to a file holding the token (e.g. a compose secret). Setting both variables fails startup, as does a path that cannot be read. |
+
 ## Secrets at rest
 
 Registry passwords, git repository tokens, runtime mTLS client keys and ACME DNS credentials are
