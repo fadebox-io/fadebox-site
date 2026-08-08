@@ -11,24 +11,23 @@ exactly the same way as any other.
 
 ## Tiers
 
-Community is the whole product with caps, not a limited build — including remote runtimes over
-mTLS. Current prices are on the pricing page; the mechanics:
+**Features are free, scale is paid, compliance is Enterprise.** Community is the whole product —
+[private registries](private-registries.md), [git value sources](git-value-sources.md),
+[OIDC single sign-on](oidc-sso.md), [groups and project roles](access-control.md), remote
+runtimes over mTLS, the CLI — with caps on scale. You pay when you are a team; Enterprise adds
+the features auditors ask about. Current prices are on the pricing page; the mechanics:
 
 | | **Community** | **Team** | **Enterprise** |
 | --- | --- | --- | --- |
 | Runtimes (Docker hosts) | 1 | 5 | unlimited |
 | Concurrent running instances, per runtime | 5 | 20 | unlimited |
 | Users | 5 (+3 service accounts) | unlimited | unlimited |
-| Projects, environments, templates | unlimited | unlimited | unlimited |
-| [Private registry credentials](private-registries.md) | — | ✅ | ✅ |
-| [Git value sources](git-value-sources.md) | — | ✅ | ✅ |
-| [Groups & project role grants](access-control.md) | — | ✅ | ✅ |
-| [OIDC single sign-on](oidc-sso.md) | — | ✅ | ✅ |
+| Every product feature | ✅ | ✅ | ✅ |
 | IdP group → role mapping | — | — | ✅ |
 
-No tier counts what you build: projects, environments, templates, per-user configuration and
-lifetime instances created are never limited. API keys are never limited either — capping CI
-robots would tax exactly the workflow Fadebox exists for.
+No tier counts what you build: projects, environments, templates, registry logins, git
+repositories, per-user configuration and lifetime instances created are never limited. API keys
+are never limited either — capping CI robots would tax exactly the workflow Fadebox exists for.
 
 Community needs no license file at all. "Users" counts active, human accounts; deactivating an
 account frees its seat, and service accounts have their own allowance.
@@ -78,8 +77,8 @@ is never gated:
 - **Reading, stopping, deleting and redeploying what you already have always works.**
 - **Downgrades are non-destructive.** Remove a license or drop a tier and everything stays and
   keeps running; you just can't add more until you are back under the caps. Already-configured
-  paid features — an OIDC provider, git value references, registry credentials — **keep
-  working**; only adding or changing such configuration requires the tier.
+  Enterprise features (IdP group mappings) **keep working** too; only adding or changing such
+  configuration requires the tier.
 
 ## Renewal, and what "expiry" means
 
