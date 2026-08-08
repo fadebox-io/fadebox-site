@@ -1,5 +1,5 @@
 ---
-import { tiers, licenceNotes } from "../data/landing";
+import { tiers, tierTable, licenceNotes } from "../data/landing";
 ---
 
 <section id="pricing" class="section container pricing">
@@ -28,14 +28,20 @@ import { tiers, licenceNotes } from "../data/landing";
             ))}
           </ul>
 
-          <p class="features-head">
-            {i === 0 ? "Includes" : `Everything in ${tiers[i - 1].name}, plus`}
-          </p>
-          <ul class="features">
-            {t.features.map((f) => (
-              <li>{f}</li>
-            ))}
-          </ul>
+          {
+            t.features.length > 0 && (
+              <>
+                <p class="features-head">
+                  {i === 0 ? "Includes" : `Everything in ${tiers[i - 1].name}, plus`}
+                </p>
+                <ul class="features">
+                  {t.features.map((f) => (
+                    <li>{f}</li>
+                  ))}
+                </ul>
+              </>
+            )
+          }
 
           <p class="support">{t.support}</p>
 
@@ -52,6 +58,27 @@ import { tiers, licenceNotes } from "../data/landing";
         </div>
       ))
     }
+  </div>
+
+  <div class="compare">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          {tiers.map((t) => <th>{t.name}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          tierTable.map((row) => (
+            <tr>
+              <th scope="row">{row.label}</th>
+              {row.values.map((v) => <td>{v}</td>)}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
   </div>
 
   <p class="fineprint">
@@ -201,6 +228,44 @@ import { tiers, licenceNotes } from "../data/landing";
   .cta.btn-secondary {
     border-color: var(--ink);
   }
+  /* The numbers at a glance. Same width as the cards so the columns read as
+     their continuation; scrolls sideways on narrow screens rather than
+     squeezing the labels. */
+  .compare {
+    max-width: 1020px;
+    margin: 0 auto;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .compare table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .compare th,
+  .compare td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    min-width: 110px;
+  }
+  .compare thead th {
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom-width: 2px;
+  }
+  .compare tbody th {
+    text-align: left;
+    font-weight: 400;
+    color: var(--muted);
+    min-width: 220px;
+  }
+  .compare td {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
   .fineprint {
     font-size: 13px;
     line-height: 1.6;

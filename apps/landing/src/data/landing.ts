@@ -85,7 +85,10 @@ export interface Tier {
   body: string;
   /** The caps that define the tier — rendered as a compact spec list. */
   limits: string[];
-  /** What the tier unlocks. Paid tiers read as "everything above, plus". */
+  /**
+   * What the tier unlocks, rendered as "everything above, plus" past the
+   * first card. Empty hides the block — Team adds scale, not features.
+   */
   features: string[];
   support: string;
   cta: string;
@@ -97,32 +100,35 @@ export interface Tier {
 
 /**
  * Tiers, caps and prices come from fadebox's business-model design note
- * (`fadebox/docs/design/business-model.md`, §Decision 1 and §Decision 2).
- * Open core with an offline licence key: the free tier is the whole product
- * with caps, and the billing unit is the installation — never the seat.
+ * (`fadebox/docs/design/business-model.md`, §Decision 1 and §Decision 2;
+ * feature split revised 2026-08-08). Open core with an offline licence key,
+ * and the billing unit is the installation — never the seat.
  *
- * Team is finite on both axes, Enterprise unlimited on both. Runtimes carry
- * the price — they track how large a customer is; instances per runtime is a
- * published second rung, set commercially. Neither number is derived from a
- * technical ceiling: licence limits express what we sell, and host limits are
- * an operations concern. What earns Enterprise is the compliance feature set,
- * not a bigger counter.
+ * Features are free, scale is paid, compliance is Enterprise: Community is
+ * the whole product — registries, git values, SSO, RBAC, nothing gated —
+ * Team raises the caps, and only the Enterprise compliance set is feature-
+ * gated. Runtimes carry the price — they track how large a customer is;
+ * instances per runtime is a published second rung, set commercially.
+ * Neither number is derived from a technical ceiling: licence limits express
+ * what we sell, and host limits are an operations concern.
  */
 export const tiers: Tier[] = [
   {
     name: "Community",
     price: "€0",
     priceNote: "",
-    body: "The whole product with caps — not a crippled build. Everything runs offline on your own hardware.",
+    body: "The whole product with caps — not a crippled build. Every feature, offline, on your own hardware.",
     limits: [
       "1 runtime · 5 concurrent instances on it",
       "5 users, plus 3 service accounts for CI",
       "Unlimited projects, environments and templates",
     ],
     features: [
-      "Local or remote Docker host over mTLS",
+      "Private registry credentials",
+      "Git value sources",
+      "OIDC single sign-on, groups & project roles",
+      "Local or remote Docker hosts over mTLS",
       "Full template catalog",
-      "Compose-native templates",
       "API keys for CI pipelines",
     ],
     support: "Community support",
@@ -135,17 +141,12 @@ export const tiers: Tier[] = [
     name: "Team",
     price: "€990",
     priceNote: "per year, per installation",
-    body: "For teams spreading previews across a few Docker hosts. Adding developers never changes the bill.",
+    body: "The same product, more of it: five hosts, twenty previews on each, as many people as you have. Adding developers never changes the bill.",
     limits: [
       "5 runtimes · 20 concurrent instances per runtime",
       "Unlimited users and service accounts",
     ],
-    features: [
-      "Private registry credentials",
-      "Git value sources",
-      "Project RBAC — groups and dynamic roles",
-      "OIDC single sign-on",
-    ],
+    features: [],
     support: "Email support, next business day",
     cta: "Get a licence",
     ctaHref: links.contact,
@@ -173,6 +174,29 @@ export const tiers: Tier[] = [
     ctaVariant: "secondary",
     emphasized: false,
   },
+];
+
+export interface TierTableRow {
+  label: string;
+  /** One cell per tier, in the order of {@link tiers}. */
+  values: [string, string, string];
+}
+
+/**
+ * The tier comparison as bare numbers — the at-a-glance complement to the
+ * cards. With features free on every tier, the numbers *are* the comparison,
+ * so this stays short: the three counted caps, then the two rows that say
+ * everything else is identical except compliance.
+ */
+export const tierTable: TierTableRow[] = [
+  { label: "Runtimes (Docker hosts)", values: ["1", "5", "Unlimited"] },
+  { label: "Concurrent instances, per runtime", values: ["5", "20", "Unlimited"] },
+  { label: "Users", values: ["5", "Unlimited", "Unlimited"] },
+  { label: "Service accounts for CI", values: ["3", "Unlimited", "Unlimited"] },
+  { label: "Projects, environments, templates", values: ["Unlimited", "Unlimited", "Unlimited"] },
+  { label: "Every product feature", values: ["✓", "✓", "✓"] },
+  { label: "IdP group mapping · SCIM · audit log · KMS", values: ["—", "—", "✓"] },
+  { label: "Support", values: ["Community", "Email, next business day", "SLA, named contact"] },
 ];
 
 export interface LicenceNote {
