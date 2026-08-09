@@ -53,7 +53,100 @@ Per provider, using its slug:
 
 Fadebox runs the **authorization-code flow server-side**, one Quarkus tenant per provider: tokens
 never reach the browser, and the session lives in an encrypted `q_session_<slug>` cookie. Sign-out
-is RP-initiated — it clears the Fadebox session and ends the provider session.
+is RP-initiated where the provider supports it — it clears the Fadebox session *and* ends the
+provider session. Fadebox reads each issuer's discovery document to see whether it advertises an
+`end_session_endpoint`; a provider without one ([Google](#google), most prominently) gets a
+**local sign-out** instead: the Fadebox session is cleared, the provider session stays. Nothing to
+configure either way — it is detected per provider.
+
+## Provider recipes
+
+Any standards-compliant provider works with the generic registration above. The two below have
+enough sharp edges to spell out.
+
+### Google
+
+Google is a plain OIDC provider from Fadebox's point of view, with three quirks: no groups in its
+tokens, no `preferred_username`, and no RP-Initiated Logout.
+
+In the [Google Cloud console](https://console.cloud.google.com):
+
+1. Create or pick a project, then configure the OAuth consent screen. The **audience** choice is
+   load-bearing: **Internal** restricts sign-in to your Google Workspace organization; **External**
+   lets *any* Google account in the world complete the flow.
+2. *APIs & Services → Credentials → Create credentials → OAuth client ID*, application type
+   **Web application**.
+3. Add the authorized redirect URI: `https://<your-fadebox-host>/oidc/callback/<slug>`.
+
+In Fadebox:
+
+| Field | Value |
+| --- | --- |
+| Issuer | `https://accounts.google.com` |
+| Client ID / secret | from the OAuth client you created |
+| Scopes | leave empty — the `profile,email` default is right |
+| Groups claim | leave the default; it stays inert (see below) |
+
+What to expect:
+
+- **Usernames are email addresses.** Google's tokens carry no `preferred_username`, so account
+  resolution falls back to the email claim.
+- **Group mapping stays inert.** Google does not put group memberships into ID tokens, so grant
+  permissions through Fadebox [groups and project roles](access-control.md) directly.
+- **Sign-out is local.** Google advertises no `end_session_endpoint`; Fadebox clears its own
+  session and the Google session survives — clicking the button again signs you straight back in
+  without a password prompt. That is Google's design, not a misconfiguration.
+- **Link by verified email** is comparatively safe to enable here: Google sets `email_verified`
+  reliably. The [general caution](#account-linking) still applies.
+
+:::caution External audience + auto-provisioning = open registration
+
+Auto-provisioning is on by default. Combined with an **External** consent screen, every Google
+account that completes the flow gets a Fadebox account with the global role `user`. Use an
+Internal (Workspace) audience, or turn auto-provisioning off and create accounts yourself.
+
+:::
+
+### Microsoft Entra ID
+
+In the [Entra admin center](https://entra.microsoft.com) (*Identity → Applications → App
+registrations → New registration*):
+
+1. Pick the single-tenant account type unless you know you need otherwise.
+2. Add a **Web** platform redirect URI: `https://<your-fadebox-host>/oidc/callback/<slug>`, and
+   register `https://<your-fadebox-host>/sign-in` as the post-logout redirect URI so Entra accepts
+   the RP-initiated sign-out.
+3. *Certificates & secrets → New client secret*. Note the expiry — Entra secrets are time-boxed,
+   and Fadebox has no way to warn you. When you rotate it, paste the new value into the provider's
+   **Client secret** field (it is write-only; leaving it blank keeps the old one).
+
+In Fadebox:
+
+| Field | Value |
+| --- | --- |
+| Issuer | `https://login.microsoftonline.com/<directory-tenant-id>/v2.0` |
+| Client ID / secret | application (client) ID and the secret's *value* |
+| Scopes | leave empty — the `profile,email` default is right |
+| Groups claim | `groups` (the default), if you configure the claim below |
+
+The issuer needs care:
+
+- Use the **Directory (tenant) ID** — the GUID from the app registration's overview — not a
+  domain name and not `common` or `organizations`. Fadebox resolves a token back to its provider
+  by the verified `iss` claim, and Entra always issues `iss` in the GUID form; any other spelling
+  of the issuer means the token matches no provider.
+- Keep the `/v2.0` suffix: it selects the endpoint version whose tokens carry
+  `preferred_username` (the UPN — that is what usernames will look like) and `email`.
+
+Group mapping works, with two Entra-specific catches. Add the groups claim under the app
+registration's *Token configuration → Add groups claim*; the values it emits are **group object
+IDs** (GUIDs), not display names, so Fadebox claim mappings must map those GUIDs. And for users in
+more than 200 groups Entra omits the claim entirely (a Graph link takes its place, which Fadebox
+does not follow) — in large directories, emit only *groups assigned to the application* instead of
+all of them.
+
+Entra advertises an `end_session_endpoint`, so sign-out is fully RP-initiated: it ends the Entra
+session too.
 
 ## Account linking
 
@@ -115,3 +208,9 @@ account does not exist yet. Create it first, or turn auto-provisioning on.
 
 **Everyone lands as role `user`.** That is the design: auto-provisioned accounts get the lowest
 global role. Grant more through [groups and project roles](access-control.md).
+
+**Signing out and straight back in skips the password prompt.** The provider does not support
+RP-Initiated Logout — its discovery document advertises no `end_session_endpoint`, with
+[Google](#google) the common case — so sign-out clears only the Fadebox session, and the surviving
+provider session does what single sign-on says. End the session at the provider itself if you
+need it gone.
