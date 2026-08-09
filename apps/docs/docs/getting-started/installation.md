@@ -51,6 +51,9 @@ services:
       QUARKUS_DATASOURCE_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
       # Session-cookie encryption key; generate with `openssl rand -base64 32`.
       QUARKUS_HTTP_AUTH_SESSION_ENCRYPTION_KEY: "${FADEBOX_SESSION_KEY:?set FADEBOX_SESSION_KEY in .env}"
+      # At-rest encryption key for stored credentials; generate the same way. Keep it stable —
+      # changing it makes every stored credential unreadable until re-entered.
+      FADEBOX_ENCRYPTION_KEY: "${FADEBOX_ENCRYPTION_KEY:?set FADEBOX_ENCRYPTION_KEY in .env}"
       # Bare-clone cache for git value sources (kept on a volume so fetches stay incremental)
       FADEBOX_GIT_CACHE_DIR: /data/git
     volumes:
@@ -73,6 +76,7 @@ Nothing host-specific is baked into the compose file, so it reads these from `.e
 {
   echo "DOCKER_GID=$(stat -c '%g' /var/run/docker.sock)"   # macOS: stat -f '%g'
   echo "FADEBOX_SESSION_KEY=$(openssl rand -base64 32)"
+  echo "FADEBOX_ENCRYPTION_KEY=$(openssl rand -base64 32)"
   echo "DB_PASSWORD=$(openssl rand -base64 24)"
 } >> .env
 ```
@@ -81,6 +85,11 @@ Nothing host-specific is baked into the compose file, so it reads these from `.e
 Desktop, your own gid under rootless Docker (which also needs
 `DOCKER_SOCK=/run/user/$UID/docker.sock`). The app container keeps its own uid and just joins that
 group; without it, every deploy fails with `permission denied` on `/var/run/docker.sock`.
+
+`FADEBOX_ENCRYPTION_KEY` encrypts stored credentials (registry passwords, git tokens, mTLS client
+keys, OIDC client secrets) at rest, so a database dump or backup does not leak them. Keep it stable
+and include it in your backups: unlike `FADEBOX_SESSION_KEY` (rotating that one just signs
+everyone out), changing this key makes every stored credential unreadable until re-entered.
 
 ## 3. Start it
 

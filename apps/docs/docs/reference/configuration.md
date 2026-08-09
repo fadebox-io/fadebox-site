@@ -3,7 +3,7 @@ title: Configuration reference
 ---
 
 Fadebox is configured with environment variables on the app container. Everything here has a
-working default except the session encryption key, which the app refuses to start without.
+working default except the two encryption keys, which the app refuses to start without.
 
 Each variable is the uppercased, underscore form of an underlying property — `fadebox.git.cache-dir`
 is `FADEBOX_GIT_CACHE_DIR`. Durations are ISO-8601 (`PT30S`, `PT5M`) unless noted.
@@ -16,6 +16,7 @@ users, groups — is **not** here. Those are managed in the UI and stored in the
 | Variable | Notes |
 | --- | --- |
 | `QUARKUS_HTTP_AUTH_SESSION_ENCRYPTION_KEY` | Encrypts the session cookie. At least 16 characters; generate with `openssl rand -base64 32`. **Startup fails without it.** Changing it signs everyone out. |
+| `FADEBOX_ENCRYPTION_KEY` | Encrypts stored credentials at rest — see [Secrets at rest](#secrets-at-rest). At least 16 characters; generate with `openssl rand -base64 32`. **Startup fails without it.** Deliberately a different secret than the session key: changing it makes every stored credential unreadable until re-entered, so keep it stable and back it up. |
 | `QUARKUS_DATASOURCE_JDBC_URL` | e.g. `jdbc:postgresql://db:5432/fadebox`. |
 | `QUARKUS_DATASOURCE_USERNAME` / `QUARKUS_DATASOURCE_PASSWORD` | Database credentials. The schema is created and migrated on startup. |
 
@@ -79,6 +80,12 @@ license takes precedence over either.
 
 ## Secrets at rest
 
-Registry passwords, git repository tokens, runtime mTLS client keys and ACME DNS credentials are
-**write-only against the API** — accepted on save, never returned — but they are not yet encrypted
-in the database. Treat database access as equivalent to holding those credentials.
+Registry passwords, git repository tokens, runtime mTLS client keys, ACME DNS credentials and OIDC
+client secrets are **write-only against the API** — accepted on save, never returned — and
+**encrypted in the database** (AES-256-GCM) under `FADEBOX_ENCRYPTION_KEY`, so a database dump or
+backup does not leak them. User passwords and API keys are hashed, not encrypted.
+
+Two things this does not change: the key lives on the app host, so a full compromise of that host
+still yields the credentials — the encryption protects the database, its backups, and SQL-level
+access, not the host itself. And losing the key means losing the stored credentials: they cannot be
+read back out, only re-entered. Back the key up alongside the database.
