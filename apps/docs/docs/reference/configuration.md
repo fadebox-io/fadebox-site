@@ -68,7 +68,7 @@ Providers themselves are database rows managed in the UI — see
 
 ## Licensing
 
-Normally the license is pasted in **Settings → License** and stored in the database — see
+Normally the license is pasted in **Administration → License** and stored in the database — see
 [Licensing](../guides/licensing.md). These exist for infrastructure-as-code installs; a pasted
 license takes precedence over either.
 

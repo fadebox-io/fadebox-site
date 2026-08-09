@@ -61,6 +61,8 @@ mappings.
 ## Mapping identity-provider groups
 
 A claim mapping puts everyone whose token carries a given value into a Fadebox group.
+Attaching claim mappings is an [Enterprise feature](licensing.md#tiers); everything else on this
+page — groups, project roles, manual membership — is available on every tier.
 
 A mapping always names **which provider** asserted the value. This matters: a bare claim value
 would be global, so `engineering` emitted by a contractor's directory would land in the same group
