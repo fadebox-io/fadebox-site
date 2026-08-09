@@ -42,10 +42,11 @@ reference like `postgres:18`.
 One credential per registry per project (or per runtime) — saving a second for the same registry
 replaces the first.
 
-:::caution At-rest storage
+:::info At-rest storage
 
-Registry passwords, git tokens, runtime client keys and ACME credentials are write-only against the
-API but are **not encrypted at rest** in the database yet. Treat database access as equivalent to
-holding those credentials, and prefer scoped robot accounts over personal ones.
+Registry passwords, git tokens, runtime client keys and ACME credentials are write-only against
+the API and [encrypted at rest](../reference/configuration.md#secrets-at-rest) under
+`FADEBOX_ENCRYPTION_KEY`. Still prefer scoped robot accounts over personal ones — the credential is
+handed to every runtime that pulls with it.
 
 :::
