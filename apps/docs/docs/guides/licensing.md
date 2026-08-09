@@ -2,9 +2,8 @@
 title: Licensing
 ---
 
-Fadebox is source-available under the
-[Elastic License 2.0](https://www.elastic.co/licensing/elastic-license) and free to run in its
-Community tier. Paid tiers are unlocked by a **license file**: a signed token you paste into
+Fadebox is commercial software, free to run in its Community tier — no license key, no
+registration. Paid tiers are unlocked by a **license file**: a signed token you paste into
 Settings. Verification is a local signature check — **nothing ever leaves your host**. There is
 no activation server, no phone-home and no telemetry; a fully air-gapped installation licenses
 exactly the same way as any other.
