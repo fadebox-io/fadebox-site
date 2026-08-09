@@ -1,5 +1,5 @@
 ---
-import { tiers, licenceNotes } from "../data/landing";
+import { tiers, tierTable, licenceNotes } from "../data/landing";
 ---
 
 <section id="pricing" class="section container pricing">
@@ -13,7 +13,7 @@ import { tiers, licenceNotes } from "../data/landing";
 
   <div class="grid">
     {
-      tiers.map((t, i) => (
+      tiers.map((t) => (
         <div class:list={["card", { emphasized: t.emphasized }]}>
           <h3 class="name">{t.name}</h3>
           <div class="price-row">
@@ -22,22 +22,7 @@ import { tiers, licenceNotes } from "../data/landing";
           </div>
           <p class="body">{t.body}</p>
 
-          <ul class="limits">
-            {t.limits.map((l) => (
-              <li>{l}</li>
-            ))}
-          </ul>
-
-          <p class="features-head">
-            {i === 0 ? "Includes" : `Everything in ${tiers[i - 1].name}, plus`}
-          </p>
-          <ul class="features">
-            {t.features.map((f) => (
-              <li>{f}</li>
-            ))}
-          </ul>
-
-          <p class="support">{t.support}</p>
+          <p class="caps">{t.caps}</p>
 
           <a
             class:list={[
@@ -54,10 +39,31 @@ import { tiers, licenceNotes } from "../data/landing";
     }
   </div>
 
+  <div class="compare">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          {tiers.map((t) => <th>{t.name}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          tierTable.map((row) => (
+            <tr>
+              <th scope="row">{row.label}</th>
+              {row.values.map((v) => <td>{v}</td>)}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
   <p class="fineprint">
     Prices exclude VAT. Community needs no licence key at all — install and run.
-    Fadebox is source-available under the Elastic License 2.0: you can read
-    every line of what runs on your host.
+    Fadebox runs entirely on your own hardware and never phones home — on any
+    tier, licensed or not.
   </p>
 
   <div class="notes">
@@ -137,60 +143,24 @@ import { tiers, licenceNotes } from "../data/landing";
     font-size: 13px;
     color: var(--muted);
   }
+  /* flex: 1 absorbs the body-length differences, so the caps line and the
+     CTA sit bottom-aligned across all three cards. */
   .body {
     font-size: 14px;
     line-height: 1.5;
     color: var(--muted);
     margin: 0;
+    flex: 1;
   }
-  .limits,
-  .features {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 14px;
-    line-height: 1.4;
-  }
-  /* Caps read as a spec sheet: bordered block, no bullets. */
-  .limits {
+  /* The tier's one spec line, styled as a bordered spec-sheet row. */
+  .caps {
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
-    padding: 14px 0;
-    font-weight: 600;
-  }
-  .features-head {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--faint);
+    padding: 12px 0;
     margin: 0;
-  }
-  .features li {
-    position: relative;
-    padding-left: 20px;
-    color: var(--muted);
-  }
-  .features li::before {
-    content: "";
-    position: absolute;
-    left: 2px;
-    top: 5px;
-    width: 9px;
-    height: 5px;
-    border-left: 2px solid var(--brand);
-    border-bottom: 2px solid var(--brand);
-    transform: rotate(-45deg);
-  }
-  /* Pushes the CTA to the card bottom so all three buttons align. */
-  .support {
-    font-size: 13px;
-    color: var(--faint);
-    margin: 0;
-    flex: 1;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 600;
   }
   /* Full-width tier CTA, following the card's box; overrides the default
      inline button padding. */
@@ -201,6 +171,44 @@ import { tiers, licenceNotes } from "../data/landing";
   .cta.btn-secondary {
     border-color: var(--ink);
   }
+  /* The numbers at a glance. Same width as the cards so the columns read as
+     their continuation; scrolls sideways on narrow screens rather than
+     squeezing the labels. */
+  .compare {
+    max-width: 1020px;
+    margin: 0 auto;
+    width: 100%;
+    overflow-x: auto;
+  }
+  .compare table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .compare th,
+  .compare td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    min-width: 110px;
+  }
+  .compare thead th {
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom-width: 2px;
+  }
+  .compare tbody th {
+    text-align: left;
+    font-weight: 400;
+    color: var(--muted);
+    min-width: 220px;
+  }
+  .compare td {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
   .fineprint {
     font-size: 13px;
     line-height: 1.6;
@@ -246,7 +254,7 @@ import { tiers, licenceNotes } from "../data/landing";
     .notes {
       grid-template-columns: 1fr;
     }
-    .support {
+    .body {
       flex: none;
     }
   }
