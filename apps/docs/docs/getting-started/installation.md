@@ -122,6 +122,8 @@ catalog, and a running URL.
 
 Optional, whenever you need them:
 
+- [Remote runtimes](../guides/remote-runtimes.md) to keep this VM small and deploy environments
+  onto a powerful Docker host instead.
 - [Single sign-on](../guides/oidc-sso.md) against your identity provider, configured in the UI.
 - [Users, groups and roles](../guides/access-control.md) for anything beyond the bootstrap admin.
 - [Configuration reference](../reference/configuration.md) for the environment variables the app

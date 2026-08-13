@@ -30,6 +30,8 @@ const sidebars: SidebarsConfig = {
       items: [
         'guides/template-authoring',
         'guides/ingress',
+        'guides/remote-runtimes',
+        'guides/deploy-gcp',
         'guides/git-value-sources',
         'guides/private-registries',
         'guides/access-control',
