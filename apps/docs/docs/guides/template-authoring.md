@@ -93,9 +93,10 @@ and let the deploy fill it in:
 | --- | --- |
 | `{{instance.name}}` | The instance slug, e.g. `pr-42`. |
 | `{{instance.namespace}}` | `{project}-{environment}-{instance}` — the container-name prefix. |
-| `{{instance.host}}` | The instance's own hostname, `{namespace}.{ingress-domain}`. |
+| `{{instance.host}}` | The instance's own hostname, `{namespace}.{ingress-domain}` — with `:port` appended on a runtime whose [ingress port](ingress.md#custom-ports-and-reverse-proxies) is not the scheme default, so `{{ingress.scheme}}://{{instance.host}}/…` stays a working URL everywhere. |
 | `{{ingress.domain}}` | The runtime's ingress domain. |
 | `{{ingress.scheme}}` | `http` or `https`, per the runtime. |
+| `{{ingress.port}}` | The port instance URLs are reached on — `80`/`443` or the runtime's override. For templates that build a per-service host from `{{ingress.domain}}` and need `:{{ingress.port}}` to survive a non-default-port runtime. |
 
 These interpolate **inside** a string, so `https://{{instance.host}}/auth` works, and they apply
 both to environment values and to injected file content.
