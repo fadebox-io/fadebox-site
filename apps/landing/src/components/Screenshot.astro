@@ -38,11 +38,6 @@ const style = maxWidth ? `max-width:${maxWidth}px` : undefined;
     height: auto;
     border: 1px solid var(--border);
     border-radius: var(--radius-card);
-    box-shadow: 0 18px 48px -24px rgba(21, 40, 60, 0.35);
-  }
-  @media (prefers-color-scheme: dark) {
-    .shot-img {
-      box-shadow: 0 18px 48px -20px rgba(0, 0, 0, 0.6);
-    }
+    box-shadow: var(--shot-shadow);
   }
 </style>
