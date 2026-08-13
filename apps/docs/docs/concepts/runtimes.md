@@ -26,6 +26,9 @@ certificate and a client key, all PEM. The three are meaningful only together. T
 Use *Test connection* after saving; it does a real round trip to the daemon and reports what it
 found rather than only whether the socket opened.
 
+[Remote runtimes](../guides/remote-runtimes.md) walks through the whole setup — securing the
+daemon with TLS, registering it, and putting the ingress on the remote host.
+
 :::caution
 
 Never expose a Docker daemon on `tcp://` without TLS client authentication. An unauthenticated
