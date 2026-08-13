@@ -39,8 +39,9 @@ labels; it never manages proxy state.
 
 :::caution
 
-Do not run the managed stack and a hand-installed proxy on the same host — both bind ports 80 and
-443.
+Do not run the managed stack and a hand-installed proxy on the same ports — by default the stack
+binds 80 and 443. On a host where those are taken, move the ingress to a free port —
+see [custom ports](#custom-ports-and-reverse-proxies) below.
 
 :::
 
@@ -57,6 +58,33 @@ is the same trust level as the daemon itself.
 Certificates live on a volume that survives upgrade and removal of the stack, so re-installing does
 not re-issue them. If you already hold certificates and would rather mount them, stay on a
 hand-installed Traefik.
+
+## Custom ports and reverse proxies
+
+By default the ingress listens on the scheme's standard port — 80, or 443 with HTTPS. Two
+per-runtime settings change that, both under *Settings → Runtimes*:
+
+**Ingress port** moves the proxy off the standard port for hosts where it is taken or unbindable.
+The managed stack binds and publishes that port instead, and the port appears in every generated
+instance URL and in `{{instance.host}}` — `shop-staging-pr42-web.envs.example.com:8443`. With
+HTTPS on a custom port, the usual `:80` → `https` redirect listener is skipped: the standard
+ports are not the stack's to bind on such a host. If you run the ingress bundle by hand instead
+of installing the managed stack, set `INGRESS_PORT` in its `.env` **and** the matching *Ingress
+Port* on the runtime — they must agree, or generated links point at a port nothing listens on.
+
+**Public port** covers a reverse proxy *in front of* the ingress, where the two ports legitimately
+differ: Traefik binds, say, 8443 while visitors reach the proxy on 443. Without it, every
+generated link would carry the internal port. Set the public port and that is what URLs and
+`{{instance.host}}` advertise instead of the bind port; setting it to the scheme default (80/443)
+makes links port-free. It changes nothing about what the managed stack binds.
+
+:::note
+
+The public port assumes the fronting proxy passes TLS through to the ingress. Terminating TLS at
+the proxy and speaking plain HTTP behind it is not supported — the URL scheme is coupled to the
+runtime's own HTTPS/ACME setup.
+
+:::
 
 ## Single-origin applications
 

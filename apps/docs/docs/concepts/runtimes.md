@@ -50,6 +50,11 @@ routes traffic to the right host:
   Per runtime, so `local` and `eu-prod` can have different ones. A runtime with no ingress domain
   simply has no instance URLs; publishing host ports still works.
 - **HTTPS** — whether URLs are `https`, and which Traefik entrypoint routers are pinned to.
+- **Ingress port** — the port the ingress proxy binds on the host. Empty means the scheme default
+  (80, or 443 with HTTPS); a non-default port appears in every generated instance URL.
+- **Public port** — for a reverse proxy in front of the ingress: the port URLs advertise when it
+  differs from the one the proxy binds. See
+  [custom ports and reverse proxies](../guides/ingress.md#custom-ports-and-reverse-proxies).
 - **Require fadebox sign-in** — gate every instance URL on the runtime behind a Fadebox session.
 - **ACME settings** — email, DNS provider and credentials for wildcard certificates via DNS-01. The
   credentials are write-only like the client key.

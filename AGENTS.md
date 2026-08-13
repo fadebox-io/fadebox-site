@@ -30,6 +30,8 @@ Docs dev server: `pnpm dev:docs` (from the root).
   path so links survive version snapshots.
 - The Fadebox code repo is private — never link into `github.com/hlavki/fadebox`; inline what the
   docs need (as the installation page does with the compose file).
+- `apps/docs/FADEBOX-SYNC.md` records the last fadebox commit/PR the docs cover and the procedure
+  for catching up. When updating docs from merged fadebox PRs, start there and bump it after.
 
 ## Astro documentation
 
