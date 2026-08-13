@@ -39,6 +39,19 @@
 
   --font: "Inter Variable", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, Menlo, monospace;
+
+  /*
+   * Light-mode atmosphere. Dark mode reads as "cool" on its own (lime on
+   * charcoal); light needs depth cues instead of flat white — a soft indigo
+   * glow and dot grid behind the hero, and brand-colored shadows under the
+   * primary CTA and hero screenshot. Dark mode zeroes these out below.
+   */
+  --hero-glow: radial-gradient(560px 300px at 50% 0%, rgba(75, 107, 251, 0.16), transparent 70%),
+    radial-gradient(1000px 520px at 50% 18%, rgba(139, 92, 246, 0.09), transparent 70%);
+  --hero-dot: rgba(21, 40, 60, 0.16);
+  --cta-glow: 0 8px 22px -8px rgba(75, 107, 251, 0.55);
+  --shot-shadow: 0 18px 48px -24px rgba(21, 40, 60, 0.35),
+    0 28px 72px -28px rgba(75, 107, 251, 0.35);
 }
 
 *,
@@ -116,6 +129,7 @@ h3 {
 .btn-primary {
   background: var(--brand);
   color: var(--on-brand);
+  box-shadow: var(--cta-glow);
 }
 
 .btn-primary:hover {
@@ -172,6 +186,15 @@ h3 {
     --placeholder: #26292e;
     --code-bg: #14161a;
     --code-text: #dce48a;
+
+    /* Same atmosphere, recast in the lime accent. Alphas run lower — glows
+       read much stronger against a dark ground. */
+    --hero-glow: radial-gradient(560px 300px at 50% 0%, rgba(205, 222, 0, 0.09), transparent 70%),
+      radial-gradient(1000px 520px at 50% 18%, rgba(205, 222, 0, 0.04), transparent 70%);
+    --hero-dot: rgba(233, 236, 239, 0.11);
+    --cta-glow: 0 8px 22px -8px rgba(205, 222, 0, 0.4);
+    --shot-shadow: 0 18px 48px -20px rgba(0, 0, 0, 0.6),
+      0 28px 72px -28px rgba(205, 222, 0, 0.22);
   }
 }
 
