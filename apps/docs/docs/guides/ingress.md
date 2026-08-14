@@ -62,7 +62,9 @@ hand-installed Traefik.
 ### Provider credentials
 
 The provider name and the variables it expects come from Traefik's
-[DNS-01 provider list](https://doc.traefik.io/traefik/https/acme/#providers). Token-based
+[DNS-01 provider list](https://doc.traefik.io/traefik/https/acme/#providers); the
+[lego DNS provider docs](https://go-acme.github.io/lego/dns/index.html) — the library behind
+Traefik's DNS-01 support — describe each provider's variables in more detail. Token-based
 providers are a single line:
 
 ```
