@@ -59,6 +59,47 @@ Certificates live on a volume that survives upgrade and removal of the stack, so
 not re-issue them. If you already hold certificates and would rather mount them, stay on a
 hand-installed Traefik.
 
+### Provider credentials
+
+The provider name and the variables it expects come from Traefik's
+[DNS-01 provider list](https://doc.traefik.io/traefik/https/acme/#providers); the
+[lego DNS provider docs](https://go-acme.github.io/lego/dns/index.html) — the library behind
+Traefik's DNS-01 support — describe each provider's variables in more detail. Token-based
+providers are a single line:
+
+```
+CF_DNS_API_TOKEN=<token with DNS edit rights on the zone>
+```
+
+Because the credentials reach Traefik only as environment variables, **file-path variables cannot
+work** — nothing mounts a key file into the managed container. Providers whose documentation
+reaches for a credentials file need the inline variant instead. **Google Cloud DNS** (`gcloud`) is
+the common case:
+
+1. The ingress domain must be a managed zone in Cloud DNS, holding the runtime's wildcard record.
+2. Create a service account with the *DNS Administrator* role and download a JSON key:
+
+   ```bash
+   gcloud iam service-accounts create fadebox-acme
+   gcloud projects add-iam-policy-binding PROJECT_ID \
+     --member serviceAccount:fadebox-acme@PROJECT_ID.iam.gserviceaccount.com \
+     --role roles/dns.admin
+   gcloud iam service-accounts keys create key.json \
+     --iam-account fadebox-acme@PROJECT_ID.iam.gserviceaccount.com
+   ```
+
+3. Set the runtime's credentials to the project id plus the key **minified to one line**
+   (`jq -c . key.json`):
+
+   ```
+   GCE_PROJECT=PROJECT_ID
+   GCE_SERVICE_ACCOUNT={"type":"service_account","project_id":"PROJECT_ID",…}
+   ```
+
+   `GCE_SERVICE_ACCOUNT_FILE` — the variable lego's own documentation starts with — is the
+   file-path variant and cannot work here. If issuance times out while the challenge record
+   propagates, add `GCE_PROPAGATION_TIMEOUT=300` as another line.
+
 ## Custom ports and reverse proxies
 
 By default the ingress listens on the scheme's standard port — 80, or 443 with HTTPS. Two
