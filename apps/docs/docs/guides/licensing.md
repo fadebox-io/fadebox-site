@@ -2,7 +2,7 @@
 title: Licensing
 ---
 
-Fadebox is commercial software, free to run in its Community tier — no license key, no
+Fadebox is commercial software with a Free tier — no license key, no
 registration. Paid tiers are unlocked by a **license file**: a signed token you paste into
 **Administration → License**. Verification is a local signature check — **nothing ever leaves your host**. There is
 no activation server, no phone-home and no telemetry; a fully air-gapped installation licenses
@@ -10,13 +10,13 @@ exactly the same way as any other.
 
 ## Tiers
 
-**Features are free, scale is paid, compliance is Enterprise.** Community is the whole product —
+**Features are free, scale is paid, compliance is Enterprise.** The Free tier is the whole product —
 [private registries](private-registries.md), [git value sources](git-value-sources.md),
 [OIDC single sign-on](oidc-sso.md), [groups and project roles](access-control.md), remote
 runtimes over mTLS, the CLI — with caps on scale. You pay when you are a team; Enterprise adds
 the features auditors ask about. Current prices are on the pricing page; the mechanics:
 
-| | **Community** | **Team** | **Enterprise** |
+| | **Free** | **Team** | **Enterprise** |
 | --- | --- | --- | --- |
 | Runtimes (Docker hosts) | 1 | 5 | unlimited |
 | Concurrent running instances, per runtime | 5 | 20 | unlimited |
@@ -28,7 +28,7 @@ No tier counts what you build: projects, environments, templates, registry login
 repositories, per-user configuration and lifetime instances created are never limited. API keys
 are never limited either — capping CI robots would tax exactly the workflow Fadebox exists for.
 
-Community needs no license file at all. "Users" counts active, human accounts; deactivating an
+The Free tier needs no license file at all. "Users" counts active, human accounts; deactivating an
 account frees its seat, and service accounts have their own allowance.
 
 ## Your installation ID
@@ -95,7 +95,7 @@ The License page shows *updates covered until \<date\>*, so renewal is a calenda
 
 | Message | Meaning | What to do |
 | --- | --- | --- |
-| *License not applied (…) — running as Community* | The stored token failed verification: a corrupted paste, a truncated file, or a build too old to know the license's signing key. | Re-paste from the original file; upgrade Fadebox first if the license is newer than the build. |
+| *License not applied (…) — running as the Free tier* | The stored token failed verification: a corrupted paste, a truncated file, or a build too old to know the license's signing key. | Re-paste from the original file; upgrade Fadebox first if the license is newer than the build. |
 | *Issued to a different installation* | The license works, but it was issued for another installation's ID. | Expected after rebuilding on an empty database — request a reissue for the new ID. |
 | *A newer config-provided license is being shadowed* | The pasted license takes precedence over a newer `FADEBOX_LICENSE`. | Remove the pasted license on the License page to let the config-provided one apply. |
 | Startup fails: release not covered by the license | The binary is newer than the license's update horizon. | Apply the renewed license, or run the previous release. |

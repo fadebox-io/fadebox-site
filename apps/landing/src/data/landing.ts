@@ -102,7 +102,7 @@ export interface Tier {
  * feature split revised 2026-08-08). Open core with an offline licence key,
  * and the billing unit is the installation — never the seat.
  *
- * Features are free, scale is paid, compliance is Enterprise: Community is
+ * Features are free, scale is paid, compliance is Enterprise: the Free tier is
  * the whole product — registries, git values, SSO, RBAC, nothing gated —
  * Team raises the caps, and only the Enterprise compliance set is feature-
  * gated. Runtimes carry the price — they track how large a customer is;
@@ -112,7 +112,7 @@ export interface Tier {
  */
 export const tiers: Tier[] = [
   {
-    name: "Community",
+    name: "Free",
     price: "€0",
     priceNote: "",
     body: "The whole product with caps — not a crippled build. Every feature, offline, on your own hardware.",

@@ -75,7 +75,7 @@ license takes precedence over either.
 
 | Variable | Default | What it does |
 | --- | --- | --- |
-| `FADEBOX_LICENSE` | *(unset)* | The license token itself. Unset means Community. |
+| `FADEBOX_LICENSE` | *(unset)* | The license token itself. Unset means the Free tier. |
 | `FADEBOX_LICENSE_PATH` | *(unset)* | Path to a file holding the token (e.g. a compose secret). Setting both variables fails startup, as does a path that cannot be read. |
 
 ## Secrets at rest
