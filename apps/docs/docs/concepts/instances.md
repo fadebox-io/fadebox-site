@@ -45,6 +45,45 @@ cancels it** rather than being refused — `STARTING → STOPPING` is a supporte
 Only `DRAFT` and `STOPPED` instances can be deleted. An `ERROR` instance is both deployable and
 stoppable, so stop-then-delete is always available; you can never be stranded.
 
+**Deploying an instance that is already running replaces it whole.** Every container of the
+previous deploy is removed first — helpers included, and services that have since been renamed or
+removed from the environment along with them — and only then does the new generation start. There
+is no rolling replacement, so the instance is down for the length of the deploy, image pulls
+included. Named volumes and the instance network survive it, and the URLs do not change. Values
+resolve before anything is torn down, so a deploy that fails while reading a
+[git value](../guides/git-value-sources.md) leaves what is running untouched.
+
+## Expiry
+
+Instances are meant to be disposable, so they carry a lifetime. Every deploy stamps the instance
+with an expiry — now plus the environment's TTL, seven days unless the installation says
+otherwise — and a sweep stops whatever has run out.
+
+**Expiry stops; it never deletes.** A swept instance lands in `STOPPED` with its definition
+untouched, and a redeploy brings it back and starts the clock again. This collects abandoned
+*containers*, not anyone's work.
+
+Two things reset the clock: **every deploy and redeploy**, so an instance in active use never
+expires under its user, and **Extend** — a button on the instance that pushes the expiry to a
+full TTL from now without redeploying. Extend needs the `deployer` role and appears only while
+the instance is running or in `ERROR` and actually has an expiry. Creating an instance does not
+start the clock: a `DRAFT` has none until its first deploy.
+
+`RUNNING` and `ERROR` instances are swept — `ERROR` deliberately, since a failed deploy leaves
+containers holding a network, which is exactly the litter this exists to collect. A deploy in
+flight is never swept, and an Extend or redeploy that lands while the sweep is deciding wins.
+The sweep runs every minute by default, so a stop follows the expiry closely rather than to the
+second.
+
+The instance shows its remaining time as a countdown (`3d 4h`, then `now`) with the exact
+timestamp in the tooltip; one that ran out and was stopped is badged `expired`, and
+`fadebox instance get` prints the same as `Expires:`. Whether a person or the sweep stopped
+something is answered by the instance's history, where a swept stop is recorded by the
+`instance-expiry` system actor — see the [audit log](../guides/audit-log.md).
+
+The lifetime itself belongs to the environment: see
+[instance lifetime](environments.md#instance-lifetime).
+
 ## The daemon is the source of truth
 
 Fadebox does not keep a shadow copy of what is running. Status is read from the Docker daemon
@@ -90,8 +129,9 @@ the default `tail` keeps each container's recent end, and byte caps
 with a visible `[fadebox] truncated …` marker rather than failing the download — the zip is
 always valid, and the manifest says exactly what was cut.
 
-Both the tail and the export read live containers, and container logs are removed when an
-instance stops — export **before** stopping what you want to keep. Any project `viewer` may read
+Both the tail and the export read live containers, and container logs die with the containers —
+on a stop, and on the redeploy that replaces them. Export **before** you stop or redeploy
+something you are still diagnosing. Any project `viewer` may read
 logs and download the export; each download is recorded in the
 [audit log](../guides/audit-log.md).
 

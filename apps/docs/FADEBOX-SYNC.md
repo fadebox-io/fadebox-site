@@ -6,8 +6,8 @@ state, not published content.
 
 ## Current state
 
-- **Last documented fadebox commit:** `501684b` (master, 2026-08-13)
-- **Merged PRs reviewed through:** #67 (#65 was the last one merged chronologically)
+- **Last documented fadebox commit:** `4cb5ff5` (master, 2026-08-16)
+- **Merged PRs reviewed through:** #81 (#66 was closed unmerged; #79 never existed)
 
 ## How to update the docs
 
@@ -32,6 +32,7 @@ state, not published content.
 
 | Date | Covered | Pages touched |
 | --- | --- | --- |
+| 2026-08-16 | PRs #68–#81 — the backlog cleared and the counters above bumped. Documented here: #70 (ingress log level), #73 (redeploy sweep), #74 (instance expiry — the largest gap: nothing about TTLs was published at all). Reviewed, no user docs needed: #68 (CI runner steering), #71 (DTOs out of services), #72 (license-store design; its tier rename was documented on 08-15). #69, #75–#78, #80 and #81 were covered by the passes below. | `concepts/instances.md` — new Expiry section, redeploy replaces the whole generation, logs die on a redeploy too; `concepts/environments.md` — new Instance lifetime; `reference/configuration.md` — new Instance expiry; `guides/ingress.md` — new Reading the ingress logs; `guides/cli.md`, `guides/audit-log.md` — cross-links. |
 | 2026-08-16 | Audit log (fadebox PRs #75–#78, #80 — counters above not bumped; #68/#70/#71/#73/#74/#79 still unreviewed) | New `guides/audit-log.md` (+ sidebar); `reference/configuration.md` — new Audit log section; `guides/licensing.md` — tier-table row, feature line link, downgrade note; `concepts/instances.md` — export-is-audited note. |
 | 2026-08-16 | Instance log export (fadebox PR #81 — single-PR pass, #68–#80 not otherwise reviewed, counters above not bumped) | `concepts/instances.md` — Logs section rewritten around tail + zip export, params and caps; `reference/configuration.md` — new Log export section. |
 | 2026-08-15 | Community tier renamed to Free (fadebox PR #72 — rename only, #68–#72 not otherwise reviewed, counters above not bumped) | `guides/licensing.md`, `reference/configuration.md`, landing pricing. |

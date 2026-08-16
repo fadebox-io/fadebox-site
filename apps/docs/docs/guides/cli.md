@@ -67,6 +67,9 @@ fadebox instance up pr-123 --wait --timeout 10m
   accept `90s`, `10m` and the like.
 - **On success it prints the instance's URLs**, taken from the deployed containers.
 - `--runtime` applies **on create only** — an existing instance keeps its runtime.
+- **Deploying re-arms the instance's lifetime.** A branch that keeps getting pushed keeps its
+  environment alive; one that goes quiet is stopped once the
+  [expiry](../concepts/instances.md#expiry) runs out, and `instance get` prints when that is.
 
 What an instance runs is its environment's definition, read fresh on every deploy — an instance
 carries no parameters of its own. To deploy other versions, set them on the environment first

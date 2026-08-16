@@ -88,6 +88,19 @@ template file **replaces** it — how an environment swaps in its own config fil
 the shared template. Because they are keyed by container, they reach a unit's helpers too, not
 just the main service.
 
+## Instance lifetime
+
+**Instance lifetime** in the environment editor sets how long this environment's instances run
+after their last deploy. It takes humane values — `7d`, `12h`, `90m`. Empty inherits the
+installation default of seven days; `0` means never expire. Over the API the field is
+`ttlSeconds` on the environment update call, an integer number of seconds, where `null` inherits
+and `0` is never.
+
+A change applies **from the next deploy or extend** — instances already running keep the expiry
+they were stamped with. Cloning an environment copies its lifetime along with the rest of the
+definition. What happens when the time runs out is [an instance matter](instances.md#expiry): the
+instance is stopped, never deleted.
+
 ## Cloning
 
 Cloning copies an environment's **definition** under a new slug — services, image tags,

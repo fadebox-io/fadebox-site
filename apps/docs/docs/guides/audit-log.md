@@ -25,7 +25,8 @@ actor names, target names and projects. The same queries are available over the 
 
 Sign-ins — including **failed** ones — and everything that changes state: users, groups and
 membership; API keys; identity providers; the license; projects, environments and templates; the
-whole instance lifecycle (create, deploy, stop, delete, extend, expiry sweeps) including
+whole instance lifecycle (create, deploy, stop, delete, extend,
+[expiry sweeps](../concepts/instances.md#expiry)) including
 [log exports](../concepts/instances.md#logs); runtimes and their certificates; ingress
 installations; and fadebox's own cleanup jobs.
 

@@ -38,6 +38,17 @@ users, groups — is **not** here. Those are managed in the UI and stored in the
 | `FADEBOX_DEPLOY_READY_TIMEOUT` | `PT5M` | Ceiling on waiting for readiness — both the per-[wave](../concepts/environments.md#start-order-waves) waits and the final aggregation. |
 | `FADEBOX_DEPLOY_CANCEL_GRACE` | `PT30S` | How long a cancel waits for the interrupted deploy worker to return before tearing containers down anyway, so teardown cannot race a worker still creating them. |
 
+## Instance expiry
+
+Every deploy stamps an instance with an expiry and a sweep stops what has run out — see
+[expiry](../concepts/instances.md#expiry). The lifetime itself is set per environment; these two
+are the installation-wide default and the sweep's cadence.
+
+| Variable | Default | What it does |
+| --- | --- | --- |
+| `FADEBOX_INSTANCE_DEFAULT_TTL` | `P7D` | The lifetime environments that set none of their own inherit. `PT0S` turns the default off, so those instances never expire — an environment with a lifetime of its own still expires. |
+| `FADEBOX_INSTANCE_EXPIRY_SWEEP_INTERVAL` | `PT1M` | How often the sweep runs, and so how closely a stop follows the expiry. Also the delay before the first sweep after a restart. |
+
 ## Log export
 
 Caps for the [instance log download](../concepts/instances.md#logs), counted on raw bytes before

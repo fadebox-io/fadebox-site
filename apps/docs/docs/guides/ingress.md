@@ -100,6 +100,33 @@ the common case:
    file-path variant and cannot work here. If issuance times out while the challenge record
    propagates, add `GCE_PROPAGATION_TIMEOUT=300` as another line.
 
+## Reading the ingress logs
+
+The managed Traefik logs at **INFO**, which is what makes certificate and routing activity
+visible — Traefik's own default, `ERROR`, is silent until something has already failed, so a
+certificate that was never requested and one issued fine look identical. Read it on the runtime
+host:
+
+```bash
+docker logs fadebox-ingress-traefik          # the socket proxy is fadebox-ingress-socket-proxy
+```
+
+Fadebox does not surface these logs in the UI; the log tail and
+[export](../concepts/instances.md#logs) cover an instance's own containers, not the shared proxy.
+These are Traefik's application logs — per-request access logging is not enabled at either level.
+
+When INFO is not enough, *Settings → Runtimes* has **Debug ingress logging** on the runtime's
+Ingress card. It applies on the next **Reinstall / Upgrade** of the stack, not on save — and that
+re-apply briefly takes ingress down for every instance on that host, so it is not a free
+operation on a busy one. Issued certificates survive it.
+
+Turn it off again once you have your answer. Beyond the volume, the Traefik container holds the
+runtime's DNS-provider credentials as environment variables for ACME, and verbose logging around
+certificate issuance is not where you want to be reading by default.
+
+If you run Traefik yourself instead of the managed stack, none of this applies — it keeps its own
+default level until you add `--log.level` to its command.
+
 ## Custom ports and reverse proxies
 
 By default the ingress listens on the scheme's standard port — 80, or 443 with HTTPS. Two
