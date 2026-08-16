@@ -165,7 +165,7 @@ export const tierTable: TierTableRow[] = [
   { label: "Service accounts for CI", values: ["3", "Unlimited", "Unlimited"] },
   { label: "Projects, environments, templates", values: ["Unlimited", "Unlimited", "Unlimited"] },
   { label: "Every product feature", values: ["✓", "✓", "✓"] },
-  { label: "IdP group mapping · SCIM · audit log · KMS", values: ["—", "—", "✓"] },
+  { label: "IdP group mapping · audit log", values: ["—", "—", "✓"] },
   { label: "Support", values: ["Community", "Email, next business day", "SLA, named contact"] },
 ];
 
