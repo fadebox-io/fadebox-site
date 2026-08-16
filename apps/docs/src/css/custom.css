@@ -15,6 +15,36 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
+/**
+ * Tier markers (src/components/Tier.tsx): the badge under a title or heading saying which paid
+ * tier the thing below needs. Built from the emphasis palette, so it follows both themes.
+ */
+.tier {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tier__badge {
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 999px;
+  padding: 0.05rem 0.6rem;
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tier__scope {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.875rem;
+}
+
 [data-theme='dark'] {
   --ifm-color-primary: #cdde00;
   --ifm-color-primary-dark: #b8c700;

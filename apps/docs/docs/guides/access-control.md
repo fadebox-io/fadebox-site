@@ -60,6 +60,8 @@ mappings.
 
 ## Mapping identity-provider groups
 
+<Tier level="enterprise">Attaching claim mappings. Existing mappings keep working on any tier.</Tier>
+
 A claim mapping puts everyone whose token carries a given value into a Fadebox group.
 Attaching claim mappings is an [Enterprise feature](licensing.md#tiers); everything else on this
 page — groups, project roles, manual membership — is available on every tier.

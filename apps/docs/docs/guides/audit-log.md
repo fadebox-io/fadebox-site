@@ -2,6 +2,8 @@
 title: Audit log
 ---
 
+<Tier level="enterprise">Recording. Reading stays open on every tier.</Tier>
+
 Who did what, when — state-changing and security-relevant actions recorded as structured,
 **append-only events**: actor, action, target, outcome, timestamp, and the context that makes a
 row useful on its own. Recording is an **Enterprise** feature ([Licensing](licensing.md));
