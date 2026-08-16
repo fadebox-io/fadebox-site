@@ -32,6 +32,7 @@ state, not published content.
 
 | Date | Covered | Pages touched |
 | --- | --- | --- |
+| 2026-08-16 | Audit log (fadebox PRs #75–#78, #80 — counters above not bumped; #68/#70/#71/#73/#74/#79 still unreviewed) | New `guides/audit-log.md` (+ sidebar); `reference/configuration.md` — new Audit log section; `guides/licensing.md` — tier-table row, feature line link, downgrade note; `concepts/instances.md` — export-is-audited note. |
 | 2026-08-16 | Instance log export (fadebox PR #81 — single-PR pass, #68–#80 not otherwise reviewed, counters above not bumped) | `concepts/instances.md` — Logs section rewritten around tail + zip export, params and caps; `reference/configuration.md` — new Log export section. |
 | 2026-08-15 | Community tier renamed to Free (fadebox PR #72 — rename only, #68–#72 not otherwise reviewed, counters above not bumped) | `guides/licensing.md`, `reference/configuration.md`, landing pricing. |
 | 2026-08-14 | ACME provider credentials (fadebox PR #69, open — counters above not bumped) | `guides/ingress.md` — provider-credentials section: env-only constraint, inline `GCE_SERVICE_ACCOUNT` walkthrough for Google Cloud DNS. |

@@ -90,7 +90,8 @@ always valid, and the manifest says exactly what was cut.
 
 Both the tail and the export read live containers, and container logs are removed when an
 instance stops — export **before** stopping what you want to keep. Any project `viewer` may read
-logs and download the export.
+logs and download the export; each download is recorded in the
+[audit log](../guides/audit-log.md).
 
 ## Ownership
 

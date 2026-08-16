@@ -14,7 +14,8 @@ exactly the same way as any other.
 [private registries](private-registries.md), [git value sources](git-value-sources.md),
 [OIDC single sign-on](oidc-sso.md), [groups and project roles](access-control.md), remote
 runtimes over mTLS, the CLI — with caps on scale. You pay when you are a team; Enterprise adds
-the features auditors ask about. Current prices are on the pricing page; the mechanics:
+the features auditors ask about — the [audit log](audit-log.md) and IdP group mapping. Current
+prices are on the pricing page; the mechanics:
 
 | | **Free** | **Team** | **Enterprise** |
 | --- | --- | --- | --- |
@@ -23,6 +24,7 @@ the features auditors ask about. Current prices are on the pricing page; the mec
 | Users | 5 (+3 service accounts) | unlimited | unlimited |
 | Every product feature | ✅ | ✅ | ✅ |
 | IdP group → role mapping | — | — | ✅ |
+| [Audit log](audit-log.md) | — | — | ✅ |
 
 No tier counts what you build: projects, environments, templates, registry logins, git
 repositories, per-user configuration and lifetime instances created are never limited. API keys
@@ -77,7 +79,9 @@ is never gated:
 - **Downgrades are non-destructive.** Remove a license or drop a tier and everything stays and
   keeps running; you just can't add more until you are back under the caps. Already-configured
   Enterprise features (IdP group mappings) **keep working** too; only adding or changing such
-  configuration requires the tier.
+  configuration requires the tier. The [audit log](audit-log.md) follows the same rule from the
+  other side: recorded history stays readable on every tier — what stops below Enterprise is the
+  recording of new events.
 
 ## Renewal, and what "expiry" means
 

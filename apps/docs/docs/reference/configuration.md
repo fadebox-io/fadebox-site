@@ -81,6 +81,17 @@ Providers themselves are database rows managed in the UI — see
 
 :::
 
+## Audit log
+
+Recording follows the license's Enterprise entitlement — there is deliberately no on/off switch
+here. See [Audit log](../guides/audit-log.md).
+
+| Variable | Default | What it does |
+| --- | --- | --- |
+| `FADEBOX_AUDIT_LOG_MIRROR` | `false` | Additionally emits every recorded event as one JSON line on the `fadebox.audit` logger, for shipping to a SIEM through the log pipeline. The database remains the source of truth. |
+| `FADEBOX_AUDIT_RETENTION` | *(unset)* | How long events are kept; unset keeps them forever. When set (ISO-8601, e.g. `P365D`), older events are purged — and the purge records its own `audit.purged` event on every tier, so the log never shrinks silently. Deliberately configuration-only, with no UI. |
+| `FADEBOX_AUDIT_RETENTION_SWEEP_INTERVAL` | `PT1H` | How often the retention purge runs, when retention is set. |
+
 ## Licensing
 
 Normally the license is pasted in **Administration → License** and stored in the database — see
