@@ -23,6 +23,9 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# local MCP server config (points at a developer's own IDE)
+.mcp.json
+
 # docusaurus
 .docusaurus/
 apps/docs/build/
