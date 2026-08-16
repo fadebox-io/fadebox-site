@@ -6,7 +6,10 @@ An **instance** is a running copy of an [environment](environments.md) on a chos
 [runtime](runtimes.md). One environment can have many: `pr-42`, `pr-43`, `alice`, `demo` — all from
 the same definition, all at the same time, even on the same Docker host.
 
-<Tier level="team">More than five running at once per runtime — redeploying one that is already running is never capped. See [Licensing](../guides/licensing.md#tiers).</Tier>
+<Tier level="team" />
+
+Free runs five at once per runtime; redeploying one that is already running never counts against
+that. See [Licensing](../guides/licensing.md#tiers).
 
 ## Isolation
 

@@ -7,7 +7,10 @@ Fadebox has two kinds of role. **Global roles** are platform-wide and live on th
 
 ## Global roles
 
-<Tier level="team">More than five people — only active accounts count, so deactivating one frees a seat. See [Licensing](licensing.md#tiers).</Tier>
+<Tier level="team" />
+
+Free covers five people — only active accounts count, so deactivating one frees a seat. See
+[Licensing](licensing.md#tiers).
 
 | Role | What it allows |
 | --- | --- |
@@ -62,7 +65,7 @@ mappings.
 
 ## Mapping identity-provider groups
 
-<Tier level="enterprise">Attaching claim mappings. Existing mappings keep working on any tier.</Tier>
+<Tier level="enterprise" />
 
 A claim mapping puts everyone whose token carries a given value into a Fadebox group.
 Attaching claim mappings is an [Enterprise feature](licensing.md#tiers); everything else on this
@@ -88,7 +91,10 @@ session to expire.
 
 ## Service accounts
 
-<Tier level="team">More than three service accounts — their allowance is separate from the one for people. See [Licensing](licensing.md#tiers).</Tier>
+<Tier level="team" />
+
+Free covers three service accounts, an allowance separate from the one for people. See
+[Licensing](licensing.md#tiers).
 
 CI pipelines authenticate as **service accounts**: accounts with roles and memberships like anyone
 else, but with no password and no interactive sign-in. They hold

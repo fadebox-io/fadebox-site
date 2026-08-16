@@ -19,7 +19,10 @@ is why template authoring and runtime management are admin-gated.
 
 ## Remote daemons
 
-<Tier level="team">A second runtime — Free runs one, and the seeded local runtime is it. See [Licensing](../guides/licensing.md#tiers).</Tier>
+<Tier level="team" />
+
+Free runs one runtime, and the seeded `local` one is it — see
+[Licensing](../guides/licensing.md#tiers).
 
 A remote runtime is a `tcp://host:2376` URI plus mutual-TLS material: a CA certificate, a client
 certificate and a client key, all PEM. The three are meaningful only together. The client key is

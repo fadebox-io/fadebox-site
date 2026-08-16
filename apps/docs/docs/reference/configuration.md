@@ -94,7 +94,7 @@ Providers themselves are database rows managed in the UI — see
 
 ## Audit log
 
-<Tier level="enterprise">Recording. These variables apply on every tier.</Tier>
+<Tier level="enterprise" />
 
 Recording follows the license's Enterprise entitlement — there is deliberately no on/off switch
 here. See [Audit log](../guides/audit-log.md).
