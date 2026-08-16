@@ -58,8 +58,39 @@ what is on the host, because that question is answered by opening the instance's
 
 ## Logs
 
-Logs are a **snapshot** of one service's output (a tail, capped at 5000 lines), not a stream. The
-UI and the CLI both read the same endpoint.
+The status panel shows a per-service **tail** — a snapshot of one service's output (capped at 5000
+lines), not a stream. The UI and the CLI both read the same endpoint.
+
+Next to the tail sits **Download**, which streams the whole instance's logs as one zip: a
+`logs/<service>.log` entry per container — init helpers and sidecars included — plus a
+`manifest.json` recording what was exported (image, state, exit code, bytes, and whether the entry
+was cut short, per container). Lines carry the daemon's timestamps, so output from different
+containers can be ordered.
+
+The download URL takes scoping parameters, which is also how a pipeline uses it with an
+[API key](../guides/ci-api-keys.md):
+
+```bash
+curl -sf -OJ -H "Authorization: Bearer $FADEBOX_API_KEY" \
+  "$HOST/api/projects/$P/environments/$E/instances/$I/logs/export?since=2026-08-16T12:00:00Z"
+```
+
+| Parameter | Default | Meaning |
+| --- | --- | --- |
+| `service` | all containers | Repeatable; takes the service keys the status panel shows. |
+| `tail` | `100000` | Last N lines **per container**, or `all`. |
+| `since` / `until` | *(unset)* | ISO-8601 instants; the Docker API applies them at second granularity. |
+| `timestamps` | `true` | The per-line timestamp prefix. |
+
+Docker cannot report a log's size in advance, so the export is **bounded rather than measured**:
+the default `tail` keeps each container's recent end, and byte caps
+([configurable](../reference/configuration.md#log-export)) cut a pathological entry mid-stream
+with a visible `[fadebox] truncated …` marker rather than failing the download — the zip is
+always valid, and the manifest says exactly what was cut.
+
+Both the tail and the export read live containers, and container logs are removed when an
+instance stops — export **before** stopping what you want to keep. Any project `viewer` may read
+logs and download the export.
 
 ## Ownership
 

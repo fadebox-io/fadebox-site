@@ -38,6 +38,20 @@ users, groups — is **not** here. Those are managed in the UI and stored in the
 | `FADEBOX_DEPLOY_READY_TIMEOUT` | `PT5M` | Ceiling on waiting for readiness — both the per-[wave](../concepts/environments.md#start-order-waves) waits and the final aggregation. |
 | `FADEBOX_DEPLOY_CANCEL_GRACE` | `PT30S` | How long a cancel waits for the interrupted deploy worker to return before tearing containers down anyway, so teardown cannot race a worker still creating them. |
 
+## Log export
+
+Caps for the [instance log download](../concepts/instances.md#logs), counted on raw bytes before
+zip compression. Docker cannot report a log's size in advance, so the export is scoped and capped
+rather than size-checked: a breached cap cuts that entry with a visible marker instead of failing
+the download.
+
+| Variable | Default | What it does |
+| --- | --- | --- |
+| `FADEBOX_LOGS_EXPORT_DEFAULT_TAIL` | `100000` | Lines per container when the request does not say — the recent end, which is the useful one. |
+| `FADEBOX_LOGS_EXPORT_MAX_CONTAINER_BYTES` | `64M` | Ceiling for one container's entry. |
+| `FADEBOX_LOGS_EXPORT_MAX_TOTAL_BYTES` | `256M` | Ceiling for the whole archive, allocated fairly across its containers. |
+| `FADEBOX_LOGS_EXPORT_MAX_CONCURRENT` | `2` | Simultaneous exports; each holds a worker thread and a daemon read for the whole download. Requests beyond it get a 429. |
+
 ## Git value sources
 
 See [Git value sources](../guides/git-value-sources.md).
