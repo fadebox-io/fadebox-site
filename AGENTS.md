@@ -30,11 +30,13 @@ Docs dev server: `pnpm dev:docs` (from the root).
   path so links survive version snapshots.
 - The Fadebox code repo is private — never link into `github.com/hlavki/fadebox`; inline what the
   docs need (as the installation page does with the compose file).
-- Mark a license-gated feature with `<Tier level="enterprise">what exactly</Tier>` (globally
-  registered, no import) under the page title or the section heading it applies to, and say in the
-  child text which part needs the tier — gates sit on configuration writes, so "the whole page is
-  Enterprise" is usually wrong. Nothing is ever marked Free, and nothing carries a Team badge:
-  the tiers differ by scale, not by features, so only the Enterprise compliance set is gated.
+- Mark what a paid tier is needed for with `<Tier level="enterprise|team">what exactly</Tier>`
+  (globally registered, no import) under the page title or the section heading it applies to. The
+  child text names the part that needs the tier — gates sit on configuration writes, so "the whole
+  page is Enterprise" is usually wrong — and may carry a relative `.md` link, which resolves
+  normally inside the badge. `enterprise` marks the two gated features; `team` marks a Free scale
+  cap from the reader's side ("a second runtime"), since the tiers differ by scale, not by
+  features. Nothing is ever marked Free.
 - `apps/docs/FADEBOX-SYNC.md` records the last fadebox commit/PR the docs cover and the procedure
   for catching up. When updating docs from merged fadebox PRs, start there and bump it after.
 

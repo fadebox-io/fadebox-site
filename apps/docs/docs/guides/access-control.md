@@ -7,6 +7,8 @@ Fadebox has two kinds of role. **Global roles** are platform-wide and live on th
 
 ## Global roles
 
+<Tier level="team">More than five people — only active accounts count, so deactivating one frees a seat. See [Licensing](licensing.md#tiers).</Tier>
+
 | Role | What it allows |
 | --- | --- |
 | `user` | The baseline every account has. On its own it grants no access to any project — you see only what a project role gives you. |
@@ -85,6 +87,8 @@ session to expire.
 :::
 
 ## Service accounts
+
+<Tier level="team">More than three service accounts — their allowance is separate from the one for people. See [Licensing](licensing.md#tiers).</Tier>
 
 CI pipelines authenticate as **service accounts**: accounts with roles and memberships like anyone
 else, but with no password and no interactive sign-in. They hold
