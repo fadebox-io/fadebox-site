@@ -64,8 +64,8 @@ curl -sf -X DELETE -H "$AUTH" "$HOST/api/projects/$P/environments/$E/instances/$
 ```
 
 A robust script must also treat a final `ERROR` status as failure instead of looping forever —
-which is exactly what the CLI's `--wait` is. `GET .../status` reports `status` plus per-container
-detail.
+which is exactly what the CLI's `--wait` is. `GET .../status` reports `status` plus `containers`,
+keyed by service — `.containers.web.urls[0]` is the preview URL of the `web` service.
 
 ## Where a key can reach
 

@@ -98,11 +98,20 @@ exactly as it would for a person.
 ## Output and exit codes
 
 `-o table` (default), `-o json` and `-o yaml`. Every command emits one document, so `jq` reaches
-any single field of a result — an instance's URLs are `.containers[].urls[]`.
+any single field of a result. A status document keys its containers **by service**, so one service
+is an address rather than a search:
+
+```bash
+fadebox instance status pr-123 -o json | jq -r '.containers.web.urls[0]'   # one service's URL
+fadebox instance status pr-123 -o json | jq -r '.containers[].urls[]'      # every URL
+fadebox instance status pr-123 -o json | jq -r '.containers | keys_unsorted[]'  # the services
+```
+
+A service has one URL per ingress port, so `urls` is a list even for a single service.
 
 `--wait` writes its live container progress to **stderr**, and only the final result to stdout. So
-`URL=$(fadebox instance up pr-123 --wait -o json | jq -r '.containers[].urls[]')` captures the URLs
-alone while you still watch the deploy happen in the job log.
+`URL=$(fadebox instance up pr-123 --wait -o json | jq -r '.containers.web.urls[0]')` captures the
+URL alone while you still watch the deploy happen in the job log.
 
 | Exit code | Meaning |
 | --- | --- |
@@ -125,7 +134,7 @@ fadebox env service set api --image-tag "$CI_COMMIT_SHA"
 fadebox env service set web --image-tag "$CI_COMMIT_SHA"
 
 URL=$(fadebox instance up "pr-$CI_MERGE_REQUEST_IID" --wait -o json \
-        | jq -r '.containers[].urls[]')
+        | jq -r '.containers.web.urls[0]')
 echo "Preview: $URL"
 
 # … run the tests against $URL …
