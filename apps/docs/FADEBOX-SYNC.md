@@ -6,8 +6,15 @@ state, not published content.
 
 ## Current state
 
-- **Last documented fadebox commit:** `4cb5ff5` (master, 2026-08-16)
-- **Merged PRs reviewed through:** #81 (#66 was closed unmerged; #79 never existed)
+- **Last documented fadebox commit:** `8940076` (master, 2026-08-17)
+- **Merged PRs reviewed through:** #90 (#66 and #89 were closed unmerged; #79 never existed)
+
+**Known gap, not covered by the counters:** runtime resource **reclaim/purge**
+(`POST /api/runtimes/{name}/resources/reclaim`, `DELETE …/resources`, and the SPA buttons over
+them) has never been documented. #83–#85 fixed real defects in it — a wrong `total` on the wire,
+networks counted as removed when the daemon refused, and `{"kinds": []}` deleting the defaults
+instead of nothing — but a fix cannot make stale docs that do not exist. Documenting it is its
+own task: a destructive admin operation with per-kind semantics deserves a page, not a footnote.
 
 ## How to update the docs
 
@@ -32,8 +39,9 @@ state, not published content.
 
 | Date | Covered | Pages touched |
 | --- | --- | --- |
-| 2026-08-17 | A status document's `containers` became a **map keyed by service** instead of a list, so `jq` addresses one service (`.containers.web.urls[0]`) rather than scanning (fadebox branch `cli-json-output`, **not yet on master** — counters above not bumped; re-check when it merges). | `guides/cli.md` — the jq recipes and the pipeline example; `guides/ci-api-keys.md` — what `GET .../status` returns. |
-| 2026-08-17 | The CLI's `-o url` output format was removed (fadebox branch `cli-json-output`, **not yet on master** — counters above not bumped; re-check when it merges). The instance URLs still ship inside the status document, so the pipeline recipe is `-o json` through `jq`. | `guides/cli.md` — output formats are table/json/yaml, the `--wait` capture and the pipeline example go through `jq`; landing `CiSection.astro` — the CI snippet. |
+| 2026-08-17 | Counters bumped to master's tip after reviewing #82–#90. Needed no docs: #82 (the expiry-badge fixes — `concepts/instances.md` already describes the corrected behaviour, since documenting expiry is what found the bugs), #86, #87's coverage plumbing, #90 (CI only). Reviewed and **deliberately not covered**: #83–#85, see the reclaim gap above. #87 and #88 are the two rows below. | none — review pass. |
+| 2026-08-17 | A status document's `containers` became a **map keyed by service** instead of a list, so `jq` addresses one service (`.containers.web.urls[0]`) rather than scanning. Written ahead of the merge; landed as `aa66b74` (PR #88). | `guides/cli.md` — the jq recipes and the pipeline example; `guides/ci-api-keys.md` — what `GET .../status` returns. |
+| 2026-08-17 | The CLI's `-o url` output format was removed; the instance URLs still ship inside the status document, so the pipeline recipe is `-o json` through `jq`. Written ahead of the merge; landed as `aa66b74` (PR #88). | `guides/cli.md` — output formats are table/json/yaml, the `--wait` capture and the pipeline example go through `jq`; landing `CiSection.astro` — the CI snippet. |
 | 2026-08-16 | PRs #68–#81 — the backlog cleared and the counters above bumped. Documented here: #70 (ingress log level), #73 (redeploy sweep), #74 (instance expiry — the largest gap: nothing about TTLs was published at all). Reviewed, no user docs needed: #68 (CI runner steering), #71 (DTOs out of services), #72 (license-store design; its tier rename was documented on 08-15). #69, #75–#78, #80 and #81 were covered by the passes below. | `concepts/instances.md` — new Expiry section, redeploy replaces the whole generation, logs die on a redeploy too; `concepts/environments.md` — new Instance lifetime; `reference/configuration.md` — new Instance expiry; `guides/ingress.md` — new Reading the ingress logs; `guides/cli.md`, `guides/audit-log.md` — cross-links. |
 | 2026-08-16 | Audit log (fadebox PRs #75–#78, #80 — counters above not bumped; #68/#70/#71/#73/#74/#79 still unreviewed) | New `guides/audit-log.md` (+ sidebar); `reference/configuration.md` — new Audit log section; `guides/licensing.md` — tier-table row, feature line link, downgrade note; `concepts/instances.md` — export-is-audited note. |
 | 2026-08-16 | Instance log export (fadebox PR #81 — single-PR pass, #68–#80 not otherwise reviewed, counters above not bumped) | `concepts/instances.md` — Logs section rewritten around tail + zip export, params and caps; `reference/configuration.md` — new Log export section. |
