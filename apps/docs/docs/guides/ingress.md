@@ -61,20 +61,27 @@ hand-installed Traefik.
 
 ### Provider credentials
 
-The provider name and the variables it expects come from Traefik's
-[DNS-01 provider list](https://doc.traefik.io/traefik/https/acme/#providers); the
-[lego DNS provider docs](https://go-acme.github.io/lego/dns/index.html) — the library behind
-Traefik's DNS-01 support — describe each provider's variables in more detail. Token-based
-providers are a single line:
+Read [lego](https://go-acme.github.io/lego/dns/), not Traefik. Traefik keeps no provider list of
+its own — it delegates the DNS-01 challenge to the lego library and points at that project's
+documentation — so lego's **DNS providers** page is the source of truth for both fields, and each
+provider has a page of its own: [`cloudflare`](https://go-acme.github.io/lego/dns/cloudflare/),
+[`gcloud`](https://go-acme.github.io/lego/dns/gcloud/), and so on.
+
+The **provider name** is the value in that page's *CLI flag name* column, exactly as written:
+`cloudflare`, `gcloud`, `route53`. The **credentials** are the variables from the provider's own
+page, one `VAR=value` per line — for token-based providers, a single line:
 
 ```
 CF_DNS_API_TOKEN=<token with DNS edit rights on the zone>
 ```
 
-Because the credentials reach Traefik only as environment variables, **file-path variables cannot
-work** — nothing mounts a key file into the managed container. Providers whose documentation
-reaches for a credentials file need the inline variant instead. **Google Cloud DNS** (`gcloud`) is
-the common case:
+Ignore everything lego says about files. It lets any variable take a `_FILE` suffix and read its
+value from a path, and some providers document a file variable first, but the credentials reach
+Traefik only as environment variables — nothing mounts a key file into the managed container, so
+a path there points at nothing. A provider needs an inline variant to be usable with the managed
+stack. **Google Cloud DNS** (`gcloud`) is the common case where that variant takes some finding —
+lego's page leads with application-default credentials and `GCE_SERVICE_ACCOUNT_FILE`, and neither
+works here:
 
 1. The ingress domain must be a managed zone in Cloud DNS, holding the runtime's wildcard record.
 2. Create a service account with the *DNS Administrator* role and download a JSON key:
@@ -96,9 +103,9 @@ the common case:
    GCE_SERVICE_ACCOUNT={"type":"service_account","project_id":"PROJECT_ID",…}
    ```
 
-   `GCE_SERVICE_ACCOUNT_FILE` — the variable lego's own documentation starts with — is the
-   file-path variant and cannot work here. If issuance times out while the challenge record
-   propagates, add `GCE_PROPAGATION_TIMEOUT=300` as another line.
+   `GCE_SERVICE_ACCOUNT` takes the key JSON itself; `GCE_SERVICE_ACCOUNT_FILE` is the path variant
+   and cannot work here. If issuance times out while the challenge record propagates, add
+   `GCE_PROPAGATION_TIMEOUT=300` as another line — lego's default is 180 seconds.
 
 ## Reading the ingress logs
 
