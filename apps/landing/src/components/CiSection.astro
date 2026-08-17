@@ -6,16 +6,25 @@ import { links } from "../data/landing";
   <div class="copy">
     <h2 class="heading">Wire it into CI in an afternoon</h2>
     <p class="body">
-      Project-fenced API keys let pipelines create, deploy, and destroy
-      instances — one preview environment per pull request, torn down on merge.
+      One binary and a project-fenced API key: pipelines create, deploy, and
+      destroy instances — one preview environment per pull request, torn down
+      on merge. <code>--wait</code> follows the deploy and exits non-zero if it
+      fails, so a broken environment stops the build instead of passing it.
     </p>
-    <a class="doclink" href={links.apiDocs}>Read the API docs →</a>
+    <div class="doclinks">
+      <a class="doclink" href={links.cliDocs}>Read the CLI docs →</a>
+      <a class="doclink" href={links.apiDocs}>API keys for CI →</a>
+    </div>
   </div>
-  <pre class="code"><code>$ curl -H "Authorization: Bearer fbx_…" \
-  …/instances/pr-42/deploy
+  <pre class="code"><code>$ fadebox instance up pr-42 --wait -o json \
+    | jq -r '.containers[].urls[]'
 
-status: RUNNING
-url: pr-42-app.preview.example.com</code></pre>
+instance: STARTING
+  web: running (healthy)
+  api: running (healthy)
+instance: RUNNING
+https://pr-42-web.preview.example.com
+https://pr-42-api.preview.example.com</code></pre>
 </section>
 
 <style>
@@ -39,6 +48,16 @@ url: pr-42-app.preview.example.com</code></pre>
     line-height: 1.6;
     color: var(--muted);
     margin: 0;
+  }
+  .body code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--ink);
+  }
+  .doclinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
   }
   .doclink {
     font-size: 15px;

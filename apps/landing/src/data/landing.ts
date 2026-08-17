@@ -12,6 +12,7 @@ export const links = {
   install: `${base}docs/install`, // "Install self-hosted"
   demo: `${base}contact`, // "Request a demo"
   docs: `${base}docs/`,
+  cliDocs: `${base}docs/guides/cli`,
   // Points at the CI guide until a generated OpenAPI reference exists at docs/api.
   apiDocs: `${base}docs/guides/ci-api-keys`,
   github: "https://github.com/fadebox",
