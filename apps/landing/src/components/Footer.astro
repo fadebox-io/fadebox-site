@@ -1,5 +1,6 @@
 ---
 import { links } from "../data/landing";
+import { publishedLegalDocs } from "../data/legal";
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -11,6 +12,8 @@ const base = import.meta.env.BASE_URL;
   <a class="link" href={links.docs}>Docs</a>
   <a class="link" href={links.github}>GitHub</a>
   <a class="link" href={links.contact}>Contact</a>
+  {/* Appears only once a legal document is in force — see `legal.ts`. */}
+  {publishedLegalDocs.length > 0 && <a class="link" href={`${base}legal/`}>Legal</a>}
   <div class="spacer"></div>
   <div class="copyright">© 2026 Fadebox</div>
 </footer>

@@ -1,0 +1,380 @@
+---
+/**
+ * Presentation shell for a legal document, modelled on how JetBrains publishes
+ * theirs: the document's identity (name, version, effective date) sits above
+ * the text, the numbered sections are anchorable, and the body is offered as a
+ * plain-text download as well as a web page.
+ *
+ * Metadata comes from `legal.ts` via the page's `docId`, never from the
+ * markdown — see the note there on why the registry owns it.
+ */
+import Layout from "./Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { legalDoc, formatEffective } from "../data/legal";
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  frontmatter: { docId: string; description?: string };
+  headings: Heading[];
+}
+
+const { frontmatter, headings } = Astro.props;
+const doc = legalDoc(frontmatter.docId);
+const base = import.meta.env.BASE_URL;
+
+// Only the numbered top-level sections; the lettered subsections inside them
+// would make the contents list longer than some of the sections themselves.
+const toc = headings.filter((h) => h.depth === 2);
+const isDraft = doc.status === "draft";
+---
+
+<Layout
+  title={`${doc.title} — Fadebox`}
+  description={frontmatter.description ?? doc.blurb}
+  noindex={isDraft}
+>
+  <Nav anchorBase={base} />
+
+  <article class="doc container">
+    <header class="doc-head">
+      <a class="eyebrow" href={`${base}legal/`}>Legal</a>
+      <h1 class="doc-title">{doc.title}</h1>
+      <p class="doc-meta">
+        <span class="version">{doc.version}</span>
+        <span class="dot" aria-hidden="true">·</span>
+        <span>
+          {doc.effective ? "Effective " : ""}{formatEffective(doc.effective)}
+        </span>
+        {isDraft && <span class="pill">Draft</span>}
+      </p>
+    </header>
+
+    {
+      isDraft && (
+        <aside class="banner" role="note">
+          <p>
+            <strong>This document is a draft and is not in force.</strong> It is
+            published here for review only. No release of Fadebox carries this
+            text yet, and nothing on this page creates an agreement between you
+            and the Licensor.
+          </p>
+        </aside>
+      )
+    }
+
+    <div class="doc-body">
+      <nav class="toc" aria-label="Contents">
+        <p class="toc-title">Contents</p>
+        <ol class="toc-list">
+          {
+            toc.map((h) => (
+              <li>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+
+      <div class="prose">
+        <slot />
+      </div>
+    </div>
+
+    <footer class="doc-foot">
+      <div class="foot-col">
+        <h2 class="foot-title">This document</h2>
+        <ul>
+          {
+            doc.plainText && (
+              <li>
+                <a href={`${base}${doc.plainText}`} download>
+                  Download as plain text
+                </a>
+              </li>
+            )
+          }
+          <li><a href={`${base}legal/`}>All legal documents</a></li>
+        </ul>
+        {doc.canonicalNote && <p class="foot-note">{doc.canonicalNote}</p>}
+      </div>
+      <div class="foot-col">
+        <h2 class="foot-title">Related</h2>
+        <ul>
+          <li><a href={`${base}#pricing`}>Pricing and tiers</a></li>
+          <li><a href={`${base}docs/guides/licensing`}>How licensing works</a></li>
+          <li><a href={`${base}docs/install`}>Install Fadebox</a></li>
+        </ul>
+      </div>
+    </footer>
+  </article>
+
+  <Footer />
+</Layout>
+
+<style>
+  .doc {
+    padding-block: 48px 64px;
+  }
+  .doc-head {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+    text-decoration: none;
+    width: fit-content;
+  }
+  .eyebrow:hover {
+    color: var(--brand);
+  }
+  .doc-title {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.2;
+    max-width: 20ch;
+  }
+  .doc-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .version {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .dot {
+    color: var(--faint);
+  }
+  /* Draft marker in the meta row, mirroring the docs' tier badge shape. */
+  .pill {
+    border: 1px solid var(--badge-border);
+    border-radius: var(--radius-badge);
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--brand-tint);
+  }
+  .banner {
+    margin-top: 28px;
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--brand);
+    border-radius: var(--radius-card);
+    background: var(--placeholder);
+    padding: 16px 20px;
+  }
+  .banner p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 70ch;
+  }
+
+  /* Contents beside the text on wide screens, above it when they stack. */
+  .doc-body {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 56px;
+    padding-top: 40px;
+    align-items: start;
+  }
+  .toc {
+    position: sticky;
+    top: 32px;
+  }
+  .toc-title {
+    margin: 0 0 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toc-list a {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .toc-list a:hover {
+    color: var(--brand);
+  }
+
+  /*
+   * Legal prose: narrower measure and looser leading than the marketing
+   * sections, because this is read in long runs rather than scanned.
+   */
+  .prose {
+    max-width: 72ch;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .prose :global(p) {
+    margin: 0 0 18px;
+  }
+  .prose :global(.lead) {
+    color: var(--muted);
+  }
+  .prose :global(h2) {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 40px 0 14px;
+    scroll-margin-top: 24px;
+  }
+  .prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .prose :global(h3) {
+    font-family: var(--font);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+    margin: 26px 0 10px;
+    scroll-margin-top: 24px;
+  }
+  .prose :global(ol),
+  .prose :global(ul) {
+    margin: 0 0 18px;
+    padding-left: 22px;
+  }
+  .prose :global(li) {
+    margin-bottom: 10px;
+  }
+  .prose :global(a) {
+    color: var(--brand);
+  }
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+  /* Capitalised blocks (disclaimer, liability) are law, not shouting — keep
+     them legible rather than letting caps run at full body contrast. */
+  .prose :global(.allcaps) {
+    color: var(--muted);
+  }
+  /*
+   * Plain-language restatement beside the clause it belongs to. Explicitly
+   * marked as not part of the agreement — a summary that could be mistaken
+   * for a term is worse than no summary.
+   */
+  .prose :global(.summary) {
+    border-left: 3px solid var(--border-strong);
+    background: var(--placeholder);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    padding: 14px 18px;
+    margin: 0 0 18px;
+  }
+  .prose :global(.summary p) {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .prose :global(.summary p + p) {
+    margin-top: 10px;
+  }
+  .prose :global(.summary strong) {
+    color: var(--ink);
+  }
+
+  .doc-foot {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    max-width: 72ch;
+  }
+  .foot-title {
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin: 0 0 12px;
+  }
+  .doc-foot ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .doc-foot a {
+    font-size: 14px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .doc-foot a:hover {
+    color: var(--brand);
+  }
+  .foot-note {
+    margin: 14px 0 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--faint);
+  }
+
+  @media (max-width: 900px) {
+    .doc-body {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+    }
+    .toc {
+      position: static;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+    }
+    .doc-title {
+      font-size: 27px;
+    }
+  }
+
+  /* Printing a legal document is a normal thing to do with one. */
+  @media print {
+    .toc,
+    .doc-foot {
+      display: none;
+    }
+    .doc-body {
+      grid-template-columns: minmax(0, 1fr);
+      padding-top: 24px;
+    }
+    .prose {
+      max-width: none;
+    }
+  }
+</style>
