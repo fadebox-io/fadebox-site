@@ -9,12 +9,9 @@ state, not published content.
 - **Last documented fadebox commit:** `8940076` (master, 2026-08-17)
 - **Merged PRs reviewed through:** #90 (#66 and #89 were closed unmerged; #79 never existed)
 
-**Known gap, not covered by the counters:** runtime resource **reclaim/purge**
-(`POST /api/runtimes/{name}/resources/reclaim`, `DELETE …/resources`, and the SPA buttons over
-them) has never been documented. #83–#85 fixed real defects in it — a wrong `total` on the wire,
-networks counted as removed when the daemon refused, and `{"kinds": []}` deleting the defaults
-instead of nothing — but a fix cannot make stale docs that do not exist. Documenting it is its
-own task: a destructive admin operation with per-kind semantics deserves a page, not a footnote.
+No known gaps. (Runtime resource reclaim/purge was the last one — undocumented until
+`guides/reclaiming-resources.md`, written 2026-08-17 after #83–#85 fixed defects in a feature the
+docs had never described.)
 
 ## How to update the docs
 
@@ -39,6 +36,7 @@ own task: a destructive admin operation with per-kind semantics deserves a page,
 
 | Date | Covered | Pages touched |
 | --- | --- | --- |
+| 2026-08-17 | Runtime resource reclaim/purge — the gap the review pass below recorded. Not a fadebox PR: an undocumented feature, found by reviewing #83–#85. | New `guides/reclaiming-resources.md` (+ sidebar); `concepts/runtimes.md` — the installation-id warning now says what to do about stranded resources; `concepts/instances.md` — volumes outlive a deleted instance, not just a redeploy. |
 | 2026-08-17 | Counters bumped to master's tip after reviewing #82–#90. Needed no docs: #82 (the expiry-badge fixes — `concepts/instances.md` already describes the corrected behaviour, since documenting expiry is what found the bugs), #86, #87's coverage plumbing, #90 (CI only). Reviewed and **deliberately not covered**: #83–#85, see the reclaim gap above. #87 and #88 are the two rows below. | none — review pass. |
 | 2026-08-17 | A status document's `containers` became a **map keyed by service** instead of a list, so `jq` addresses one service (`.containers.web.urls[0]`) rather than scanning. Written ahead of the merge; landed as `aa66b74` (PR #88). | `guides/cli.md` — the jq recipes and the pipeline example; `guides/ci-api-keys.md` — what `GET .../status` returns. |
 | 2026-08-17 | The CLI's `-o url` output format was removed; the instance URLs still ship inside the status document, so the pipeline recipe is `-o json` through `jq`. Written ahead of the merge; landed as `aa66b74` (PR #88). | `guides/cli.md` — output formats are table/json/yaml, the `--wait` capture and the pipeline example go through `jq`; landing `CiSection.astro` — the CI snippet. |
