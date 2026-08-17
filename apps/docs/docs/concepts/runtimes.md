@@ -79,4 +79,5 @@ queries filter on. Without it, the label values the two installations generate c
 installation's teardown can remove the other's containers.
 
 Changing the value later orphans containers deployed under the old one, so set it before the first
-deploy.
+deploy — and if you already have, [reclaiming host resources](../guides/reclaiming-resources.md)
+is how you find and remove what was stranded.

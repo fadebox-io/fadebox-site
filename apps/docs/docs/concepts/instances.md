@@ -52,7 +52,10 @@ stoppable, so stop-then-delete is always available; you can never be stranded.
 previous deploy is removed first — helpers included, and services that have since been renamed or
 removed from the environment along with them — and only then does the new generation start. There
 is no rolling replacement, so the instance is down for the length of the deploy, image pulls
-included. Named volumes and the instance network survive it, and the URLs do not change. Values
+included. Named volumes and the instance network survive it, and the URLs do not change. (Stopping
+removes the containers and the network; **named volumes are removed by no path at all**, so they
+outlive even a deleted instance — see
+[reclaiming host resources](../guides/reclaiming-resources.md).) Values
 resolve before anything is torn down, so a deploy that fails while reading a
 [git value](../guides/git-value-sources.md) leaves what is running untouched.
 
