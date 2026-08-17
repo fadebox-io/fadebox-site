@@ -9,7 +9,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Fadebox',
   tagline: 'Self-hosted ephemeral environments on Docker',
-  favicon: 'img/favicon.svg',
+  // The landing's light logo mark, same file it serves as its own favicon.
+  favicon: 'img/logo-mark.svg',
 
   future: {
     v4: true,
