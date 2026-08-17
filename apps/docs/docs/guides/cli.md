@@ -97,12 +97,12 @@ exactly as it would for a person.
 
 ## Output and exit codes
 
-`-o table` (default), `-o json`, `-o yaml`, and `-o url` on instance commands, which prints the
-instance's URLs one per line and nothing else — a merge-request comment becomes a one-liner.
+`-o table` (default), `-o json` and `-o yaml`. Every command emits one document, so `jq` reaches
+any single field of a result — an instance's URLs are `.containers[].urls[]`.
 
 `--wait` writes its live container progress to **stderr**, and only the final result to stdout. So
-`URL=$(fadebox instance up pr-123 --wait -o url)` captures the URLs alone while you still watch the
-deploy happen in the job log.
+`URL=$(fadebox instance up pr-123 --wait -o json | jq -r '.containers[].urls[]')` captures the URLs
+alone while you still watch the deploy happen in the job log.
 
 | Exit code | Meaning |
 | --- | --- |
@@ -124,7 +124,8 @@ export FADEBOX_PROJECT=demo FADEBOX_ENV=dev
 fadebox env service set api --image-tag "$CI_COMMIT_SHA"
 fadebox env service set web --image-tag "$CI_COMMIT_SHA"
 
-URL=$(fadebox instance up "pr-$CI_MERGE_REQUEST_IID" --wait -o url)
+URL=$(fadebox instance up "pr-$CI_MERGE_REQUEST_IID" --wait -o json \
+        | jq -r '.containers[].urls[]')
 echo "Preview: $URL"
 
 # … run the tests against $URL …
