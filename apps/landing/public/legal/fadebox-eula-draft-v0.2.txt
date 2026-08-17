@@ -1,0 +1,124 @@
+FADEBOX END USER LICENSE AGREEMENT
+
+>>> DRAFT v0.2 (2026-08-17) — PENDING LEGAL REVIEW. Not yet in force; do not
+>>> ship a release carrying this text until counsel has reviewed it. <<<
+
+Copyright (c) 2026 MoresApp s.r.o. All rights reserved.
+
+This End User License Agreement (the "Agreement") governs the use of the
+Fadebox software in binary form, its documentation, and any updates provided
+to you (together, the "Software"). Fadebox is proprietary, closed-source
+software. By installing or using the Software you agree to this Agreement.
+
+The "Licensor" is MoresApp s.r.o., a limited liability company incorporated
+under the laws of the Czech Republic, with its registered seat at
+Wassermannova 921/6, Hlubočepy, 152 00 Praha 5, Czech Republic, company
+identification number (IČO) 09594965, registered in the Commercial Register
+kept by the Municipal Court in Prague, Section C, Insert 338394.
+
+1. DEFINITIONS
+
+   "Installation" means one deployed instance of the Software's control
+   plane, identified by the installation ID it generates at first start,
+   regardless of how many Docker hosts (runtimes) it manages.
+
+   "License Key" means a signed license file issued by the Licensor that
+   encodes the licensed tier, limits, the Installation it was issued for,
+   and the Update Horizon.
+
+   "Free Tier" means use of the Software without a License Key, subject
+   to the built-in limits the Software enforces for unlicensed use.
+
+   "Update Horizon" means the date encoded in a License Key; the License Key
+   covers every version of the Software released before that date.
+
+2. LICENSE GRANT
+
+   (a) Free. The Licensor grants you a non-exclusive, non-transferable,
+       royalty-free right to install and use the Software in the Free
+       Tier, for any purpose including production use.
+
+   (b) Paid tiers. Subject to payment of the applicable fees, the Licensor
+       grants you a non-exclusive, non-transferable right to use the
+       Software on the Installation named in your License Key, within the
+       tier and limits the License Key encodes.
+
+   (c) Perpetual fallback. Rights to versions released before your License
+       Key's Update Horizon are perpetual and survive expiry of any
+       subscription. Versions released after the Update Horizon require a
+       renewed License Key.
+
+3. RESTRICTIONS
+
+   You may not, and may not permit any third party to:
+
+   (a) distribute, sell, rent, lease, sublicense or otherwise make the
+       Software available to any third party, including as a hosted or
+       managed service whose substantial value is the functionality of the
+       Software;
+
+   (b) reverse engineer, decompile, disassemble or otherwise attempt to
+       derive the source code of the Software, except to the extent such a
+       restriction is prohibited by applicable law;
+
+   (c) circumvent, disable or interfere with the License Key functionality
+       or any limit it enforces, or use one License Key for more than one
+       Installation;
+
+   (d) remove or obscure any copyright, trademark or license notices in the
+       Software.
+
+4. LICENSE KEYS AND PRIVACY
+
+   License Keys are verified locally by cryptographic signature. The
+   Software performs no license-related network communication, collects no
+   telemetry, and transmits nothing to the Licensor. Exceeding a licensed
+   limit prevents creating or deploying new resources only; the Software
+   will not stop or degrade resources that are already running.
+
+5. THIRD-PARTY COMPONENTS
+
+   The Software incorporates third-party components licensed under their own
+   permissive terms; the applicable notices are provided in the
+   THIRD-PARTY-NOTICES file distributed with the Software. The template
+   catalog and the ingress deployment bundle are licensed separately under
+   the Apache License 2.0 as marked. Container images referenced by
+   templates are pulled by you from their publishers under those publishers'
+   own terms; the Licensor does not distribute them.
+
+6. SUPPORT AND UPDATES
+
+   Support obligations, if any, are those stated for your tier in the
+   applicable order form or on the Licensor's published price list.
+
+7. TERMINATION
+
+   This Agreement terminates automatically if you materially breach it and
+   do not cure the breach within 30 days of notice. On termination you must
+   stop using the Software and destroy your copies. Sections 3, 8, 9 and 10
+   survive termination. Termination does not affect rights under section
+   2(c) unless the termination was for breach of section 3.
+
+8. WARRANTY DISCLAIMER
+
+   THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NON-INFRINGEMENT. You are responsible for the security configuration of
+   the Docker hosts the Software manages.
+
+9. LIMITATION OF LIABILITY
+
+   TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE LICENSOR'S AGGREGATE
+   LIABILITY UNDER THIS AGREEMENT IS LIMITED TO THE FEES YOU PAID FOR THE
+   SOFTWARE IN THE TWELVE MONTHS PRECEDING THE CLAIM, AND THE LICENSOR IS
+   NOT LIABLE FOR INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES OR
+   LOSS OF DATA OR PROFITS. Nothing in this Agreement limits liability that
+   cannot be limited under applicable law.
+
+10. GENERAL
+
+   This Agreement is governed by the laws of the Czech Republic, and the
+   courts of the Czech Republic have exclusive jurisdiction, with venue at
+   the Licensor's registered seat. If a provision is unenforceable, the
+   remainder stays in effect. This Agreement is the entire agreement
+   concerning the Software and supersedes prior discussions.

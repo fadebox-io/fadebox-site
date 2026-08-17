@@ -1,10 +1,21 @@
 ---
 import { links, showPricing } from "../data/landing";
 const base = import.meta.env.BASE_URL;
+
+interface Props {
+  /**
+   * Prefix for the section anchors. Empty on the home page, where they are
+   * same-page jumps; set to the site base on subpages (legal documents), where
+   * a bare `#features` would resolve against the subpage's own URL and go
+   * nowhere.
+   */
+  anchorBase?: string;
+}
+const { anchorBase = "" } = Astro.props;
 ---
 
 <nav class="nav container">
-  <a class="brand" href="#" aria-label="fadebox — home">
+  <a class="brand" href={anchorBase || "#"} aria-label="fadebox — home">
     <picture>
       <source srcset={`${base}logo-lockup-dark.svg`} media="(prefers-color-scheme: dark)" />
       <img class="lockup" src={`${base}logo-lockup.svg`} alt="fadebox" width="128" height="26" />
@@ -12,12 +23,12 @@ const base = import.meta.env.BASE_URL;
   </a>
   <div class="spacer"></div>
   <div class="nav-links">
-    <a class="nav-link" href="#features">Features</a>
-    <a class="nav-link" href="#how">How it works</a>
-    {showPricing && <a class="nav-link" href="#pricing">Pricing</a>}
+    <a class="nav-link" href={`${anchorBase}#features`}>Features</a>
+    <a class="nav-link" href={`${anchorBase}#how`}>How it works</a>
+    {showPricing && <a class="nav-link" href={`${anchorBase}#pricing`}>Pricing</a>}
     <a class="nav-link" href={links.docs}>Docs</a>
   </div>
-  <a class="nav-cta" href="#cta">Get started</a>
+  <a class="nav-cta" href={`${anchorBase}#cta`}>Get started</a>
 </nav>
 
 <style>

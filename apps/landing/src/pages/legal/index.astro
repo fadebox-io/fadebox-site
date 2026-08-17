@@ -1,0 +1,180 @@
+---
+/**
+ * Hub for the legal documents — the page a "Legal" footer link lands on once
+ * anything is in force. It lists every registered document, drafts included and
+ * labelled as such, so a reviewer sent here sees the full set.
+ */
+import Layout from "../../layouts/Layout.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import { legalDocs, publishedLegalDocs, formatEffective } from "../../data/legal";
+
+const base = import.meta.env.BASE_URL;
+// Nothing in force yet means nothing here is worth indexing.
+const noindex = publishedLegalDocs.length === 0;
+---
+
+<Layout
+  title="Legal — Fadebox"
+  description="The agreements governing the use and purchase of Fadebox."
+  noindex={noindex}
+>
+  <Nav anchorBase={base} />
+
+  <main class="hub container">
+    <header class="head">
+      <p class="eyebrow">Legal</p>
+      <h1 class="title">Legal documents</h1>
+      <p class="sub">
+        The agreements that govern using and buying Fadebox. Each is published
+        in full, with its version and effective date, and can be downloaded as
+        plain text.
+      </p>
+    </header>
+
+    <ul class="list">
+      {
+        legalDocs.map((doc) => (
+          <li class="row">
+            <div class="row-main">
+              <a class="row-title" href={`${base}legal/${doc.id}/`}>
+                {doc.title}
+              </a>
+              <p class="row-blurb">{doc.blurb}</p>
+            </div>
+            <div class="row-meta">
+              <span class="row-version">{doc.version}</span>
+              <span class="row-date">
+                {doc.effective ? "Effective " : ""}
+                {formatEffective(doc.effective)}
+              </span>
+              {doc.status === "draft" && <span class="pill">Draft</span>}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="note">
+      Questions about any of these — including whether a term works for your
+      procurement process — go to <a href={`${base}contact`}>contact</a>. How
+      licensing behaves in the product is documented separately, under{" "}
+      <a href={`${base}docs/guides/licensing`}>licensing</a>.
+    </p>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .hub {
+    padding-block: 48px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 620px;
+  }
+  .eyebrow {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .title {
+    font-size: 34px;
+    font-weight: 700;
+  }
+  .sub {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--border);
+    max-width: 900px;
+  }
+  /* Document on the left, its identity on the right — the same shape the
+     document header uses, so the list reads as a directory of headers. */
+  .row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .row-main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .row-title {
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .row-blurb {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+  .row-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .row-version {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .pill {
+    border: 1px solid var(--badge-border);
+    border-radius: var(--radius-badge);
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--brand-tint);
+  }
+
+  .note {
+    margin: 0;
+    max-width: 60ch;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--faint);
+  }
+  .note a {
+    color: var(--brand);
+  }
+
+  @media (max-width: 760px) {
+    .row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .title {
+      font-size: 27px;
+    }
+  }
+</style>

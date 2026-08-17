@@ -21,6 +21,22 @@ Manage it with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
 Docs dev server: `pnpm dev:docs` (from the root).
 
+## Legal documents
+
+- Published by the landing app under `/legal/`: prose in `apps/landing/src/pages/legal/*.md`,
+  presentation in `LegalLayout.astro`, and **all metadata — version, effective date, status — in
+  `apps/landing/src/data/legal.ts`**. Never put a version or date in the markdown; the registry
+  owns them so the hub, the document header and the footer cannot disagree.
+- `status: "draft"` keeps a document out of the footer and out of search engines (`noindex`) while
+  it still builds and deploys, so counsel can be sent a real URL. Flipping it to `"in-force"` (with
+  an `effective` date) is the whole publishing step.
+- The EULA is **not authored in this repo**. `fadebox/LICENSE` in the product repo is canonical —
+  it ships in the binary and is what customers agree to. The page and the `public/legal/*.txt`
+  download are mirrors: edit `LICENSE` first, then re-copy, and keep the `.txt` byte-identical
+  (`diff` them). Bump the version in `legal.ts` and rename the `.txt` when the text changes.
+- The licensor is **MoresApp s.r.o.**, IČO 09594965, Wassermannova 921/6, Hlubočepy, 152 00 Praha 5,
+  registered at the Municipal Court in Prague, Section C, Insert 338394. Czech law, Czech courts.
+
 ## Docs conventions
 
 - `apps/docs/docs/` documents the next (unreleased) Fadebox version. Released versions are
