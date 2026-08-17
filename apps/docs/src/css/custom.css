@@ -1,9 +1,17 @@
+/* Self-hosted brand fonts, same packages the landing bundles — no external CDN. */
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+
 /**
  * Brand alignment with the landing page (apps/landing/src/styles/global.css):
- * blue in light mode, lime in dark mode.
+ * blue in light mode, lime in dark mode, Inter and JetBrains Mono in both. Keep the
+ * two stacks identical to --font / --font-mono there; the apps share one origin, so a
+ * reader crossing into /docs/ would otherwise see the typeface change under them.
  */
 
 :root {
+  --ifm-font-family-base: "Inter Variable", system-ui, -apple-system, sans-serif;
+  --ifm-font-family-monospace: "JetBrains Mono Variable", ui-monospace, Menlo, monospace;
   --ifm-color-primary: #4b6bfb;
   --ifm-color-primary-dark: #3452e6;
   --ifm-color-primary-darker: #2c49d9;
