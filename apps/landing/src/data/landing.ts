@@ -139,7 +139,7 @@ export const tiers: Tier[] = [
     priceNote: "per year, per installation",
     body: "For a fleet of hosts, an identity provider to integrate with, and a security review to pass.",
     caps: "Unlimited everything · compliance features",
-    cta: "Talk to sales",
+    cta: "Get a licence",
     ctaHref: links.contact,
     ctaVariant: "secondary",
     emphasized: false,
