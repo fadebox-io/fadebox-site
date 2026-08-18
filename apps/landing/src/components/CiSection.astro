@@ -16,21 +16,26 @@ import { links } from "../data/landing";
       <a class="doclink" href={links.apiDocs}>API keys for CI →</a>
     </div>
   </div>
-  <pre class="code"><code>$ fadebox instance up pr-42 --wait -o json \
-    | jq -r '.containers[].urls[]'
+  <pre class="code"><code>$ fadebox instance up pr-42 --wait
 
+Created instance 'pr-42'.
 instance: STARTING
+  web: running (starting)
+  api: running (starting)
   web: running (healthy)
   api: running (healthy)
 instance: RUNNING
-https://pr-42-web.preview.example.com
-https://pr-42-api.preview.example.com</code></pre>
+Instance 'pr-42' is RUNNING
+
+SERVICE  STATE    HEALTH   IMAGE           URLS
+web      running  healthy  acme/web:pr-42  https://pr-42-web.example.com
+api      running  healthy  acme/api:pr-42  https://pr-42-api.example.com</code></pre>
 </section>
 
 <style>
   .ci {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1.15fr;
     gap: 48px;
     align-items: center;
   }
@@ -70,9 +75,9 @@ https://pr-42-api.preview.example.com</code></pre>
     padding: 22px 24px;
     margin: 0;
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.7;
-    white-space: pre-wrap;
+    white-space: pre;
     overflow-x: auto;
   }
   .code code {
