@@ -6,6 +6,9 @@ An **instance** is a running copy of an [environment](environments.md) on a chos
 [runtime](runtimes.md). One environment can have many: `pr-42`, `pr-43`, `alice`, `demo` — all from
 the same definition, all at the same time, even on the same Docker host.
 
+The one environment that cannot have instances is a [blueprint](environments.md#blueprints), which
+exists to be cloned rather than run; clone it and deploy the clone.
+
 <Tier level="team" />
 
 Free runs five at once per runtime; redeploying one that is already running never counts against

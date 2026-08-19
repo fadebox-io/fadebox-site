@@ -76,6 +76,12 @@ carries no parameters of its own. To deploy other versions, set them on the envi
 (`env service set`), or [clone the environment](../concepts/environments.md#cloning) into a second
 version stream (`env clone`).
 
+A [blueprint](../concepts/environments.md#blueprints) environment refuses instances altogether —
+`instance create` and `up` answer `409`. `env list` marks one in its `KIND` column and `env get`
+prints a `Blueprint:` line, so a pipeline that must not assume can check before it deploys. Cloning
+a blueprint yields a deployable environment, so `env clone base dev` then `instance up` is the way
+through.
+
 `--wait` is available on `up`, `deploy` and `stop`.
 
 ## Command surface
@@ -85,7 +91,7 @@ version stream (`env clone`).
 | `fadebox login` | Verify a key and store a context. |
 | `fadebox context list \| use \| current` | Switch between installations. |
 | `fadebox env list \| get` | Environments of the project. |
-| `fadebox env clone <source> <slug>` | Copy an environment's definition — the second version stream. |
+| `fadebox env clone <source> <slug>` | Copy an environment's definition — the second version stream, and how a [blueprint](../concepts/environments.md#blueprints) is used. |
 | `fadebox env service set <name> --image-tag …` | Set what a service runs: image tag, env overrides, job flag. A full replace — options left out are cleared (except `--job`). |
 | `fadebox instance list \| get \| create \| up \| deploy \| stop \| delete` | The instance lifecycle. |
 | `fadebox instance status \| logs` | Live state and a log snapshot. |

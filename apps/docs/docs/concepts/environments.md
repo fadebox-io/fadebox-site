@@ -105,12 +105,45 @@ instance is stopped, never deleted.
 
 Cloning copies an environment's **definition** under a new slug — services, image tags,
 environment-variable overrides, waves, injected files and shared variables. Instances are never
-copied; they stay with the original.
+copied; they stay with the original, and neither is the [blueprint](#blueprints) flag.
 
 This is how a second version stream is made: clone `dev` to `dev-v2`, then edit the tags. The
 variation is named and visible in the environment list, instead of hidden in per-instance
 parameters. In the dialog, typing a name suggests the slug; from a pipeline it is one call —
 `fadebox env clone dev dev-v2`.
+
+## Blueprints
+
+An environment can be marked a **blueprint**: a definition kept to be cloned from and never
+deployed. Creating an instance of one is refused, so a blueprint is the environment you can improve
+freely, knowing nothing is running from it.
+
+The problem it solves shows up once a team clones regularly. The environment everyone copies —
+call it `base` — is an ordinary environment, so it can also be deployed, and over time it collects
+instances of its own. Now editing it to improve the next clone risks disturbing something live, and
+the "canonical" environment is only canonical by convention. Marking it a blueprint makes that
+convention a rule.
+
+Three things follow from it, and the third is the one worth remembering:
+
+- **Instances are refused.** The *New instance* button is gone in the UI; over the API and the CLI
+  the call answers `409` with *"… is a blueprint — clone it to deploy"*.
+- **The flag can only be set while the environment has no instances**, because that is exactly what
+  it promises. If it still has some, the save is refused and tells you how many; delete them first.
+  Clearing the flag has no such condition — a blueprint you decide you want to run just becomes an
+  ordinary environment again.
+- **Clones are deployable.** A clone does *not* inherit the flag, which is the whole point: cloning
+  is how a blueprint gets used. `fadebox env clone base dev` gives you a `dev` you can deploy
+  immediately. When you genuinely want a second base — forking `base` into `base-eu` — the clone
+  dialog offers a checkbox to make the copy a blueprint too, which is safer than cloning and then
+  editing, since it leaves no moment where the copy is deployable.
+
+Set it with the **Blueprint** checkbox in the environment editor, or `blueprint: true` on the
+create, update and clone API calls. Blueprints carry a `blueprint` badge in the environment list
+and on the environment page, and a `blueprint` value in the `KIND` column of `fadebox env list`.
+
+Everything else about a blueprint is an ordinary environment: it holds services, image tags, shared
+variables and files, and it can be [exported](#exporting) as Compose like any other.
 
 ## Exporting
 
