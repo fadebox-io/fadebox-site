@@ -135,10 +135,22 @@ KC_DB_PASSWORD: "{{service.postgres.env.POSTGRES_PASSWORD}}"
 Renamed the provider? Override the consumer's variable in the environment with a reference to the
 new name — the template stays untouched.
 
-Nobody has to write these from memory: the env editors that sit inside an environment (the
-composer's per-service overrides, and the add/edit-service drawers) have a **Service reference**
-builder next to the git one — pick a sibling service, then its hostname or one of its env vars,
-and the finished placeholder lands at the caret. The composer also **warns** when a service's
+Nobody has to write these from memory. In the **spec editor**, typing `{{` offers the
+placeholders above; `{{service.` offers the templates this one could be composed alongside — the
+project's own plus the global ones — and `{{service.<name>.env.` offers that template's
+variables. Accepting a suggestion closes the braces for you.
+
+What the editor completes are *template* names, because a template is authored before any
+environment exists. That is a good guess rather than a promise: the composer names a service
+after the template it comes from by default, but the name is the environment's to change, and
+`{{service.…}}` resolves against whatever it ends up being. Rename it and you override the
+consumer's variable, as above.
+
+The env editors that sit inside an environment (the
+composer's per-service overrides, and the add/edit-service drawers) go further, because there the
+environment is real: they have a **Service reference** builder next to the git one — pick a
+sibling service, then its hostname or one of its env vars, and the finished placeholder lands at
+the caret. The composer also **warns** when a service's
 template or overrides reference a name the environment doesn't have yet; the warning is
 non-blocking, because the deploy is the enforcement point and the missing service may simply not
 be added yet.
@@ -154,6 +166,16 @@ namespace `tpl-test-<template>`.
 
 A template that carries `{{service.*}}` references cannot test-run — the references need sibling
 services, and a test run deploys the template alone. Compose it into an environment instead.
+
+## The spec editor
+
+The spec field is a code editor: YAML highlighting, line numbers, folding, and search
+(`Ctrl`/`Cmd`+`F`). `Tab` indents inside it rather than moving to the next field, so use
+`Escape` then `Tab` to leave. It completes placeholders as you type — see
+[values another service owns](#values-another-service-owns).
+
+The same editor holds injected file contents, highlighting them as YAML when the target path ends
+`.yaml` or `.yml`.
 
 ## Starting from a framework skeleton
 
