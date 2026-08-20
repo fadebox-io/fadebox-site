@@ -70,6 +70,11 @@ If you sign in through SSO you have no password, so a personal key is how you us
 
 ## Using the key
 
+An **AI agent** is the third consumer, and the one that most wants a key of its own: point Claude
+Code or an IDE assistant at the [MCP endpoint](mcp.md) and it reads and operates your environments
+with exactly the authority the key's account has. Give each agent its own service account, and do
+not hand one a personal key.
+
 The [`fadebox` CLI](cli.md) is the intended client — it wraps the deploy loop, exits non-zero when a
 deploy fails, and prints the instance URLs:
 

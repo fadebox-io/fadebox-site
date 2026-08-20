@@ -12,6 +12,9 @@ It works just as well from your own machine. Any key drives it, so you can point
 key and act as the pipeline does. If you sign in through SSO you have no password, so a personal
 key is how you use the CLI at all.
 
+If what you want is an *agent* driving Fadebox rather than a command you type, that is the
+[MCP endpoint](mcp.md) instead.
+
 ## Install
 
 Download `fadebox-linux-amd64` from the latest release and put it on your `PATH`:
