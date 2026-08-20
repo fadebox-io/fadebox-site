@@ -7,6 +7,9 @@ team already writes — plus a few label directives for the things plain Compose
 
 Templates are authored by an `admin` or a `template_admin`.
 
+If the service you are modelling is a Spring Boot, Quarkus or Rails application, the create form
+can [start you from a skeleton](#starting-from-a-framework-skeleton) rather than an empty editor.
+
 ## The supported Compose subset
 
 Under `services:`, these keys are understood:
@@ -132,10 +135,22 @@ KC_DB_PASSWORD: "{{service.postgres.env.POSTGRES_PASSWORD}}"
 Renamed the provider? Override the consumer's variable in the environment with a reference to the
 new name — the template stays untouched.
 
-Nobody has to write these from memory: the env editors that sit inside an environment (the
-composer's per-service overrides, and the add/edit-service drawers) have a **Service reference**
-builder next to the git one — pick a sibling service, then its hostname or one of its env vars,
-and the finished placeholder lands at the caret. The composer also **warns** when a service's
+Nobody has to write these from memory. In the **spec editor**, typing `{{` offers the
+placeholders above; `{{service.` offers the templates this one could be composed alongside — the
+project's own plus the global ones — and `{{service.<name>.env.` offers that template's
+variables. Accepting a suggestion closes the braces for you.
+
+What the editor completes are *template* names, because a template is authored before any
+environment exists. That is a good guess rather than a promise: the composer names a service
+after the template it comes from by default, but the name is the environment's to change, and
+`{{service.…}}` resolves against whatever it ends up being. Rename it and you override the
+consumer's variable, as above.
+
+The env editors that sit inside an environment (the
+composer's per-service overrides, and the add/edit-service drawers) go further, because there the
+environment is real: they have a **Service reference** builder next to the git one — pick a
+sibling service, then its hostname or one of its env vars, and the finished placeholder lands at
+the caret. The composer also **warns** when a service's
 template or overrides reference a name the environment doesn't have yet; the warning is
 non-blocking, because the deploy is the enforcement point and the missing service may simply not
 be added yet.
@@ -151,6 +166,79 @@ namespace `tpl-test-<template>`.
 
 A template that carries `{{service.*}}` references cannot test-run — the references need sibling
 services, and a test run deploys the template alone. Compose it into an environment instead.
+
+## The spec editor
+
+The spec field is a code editor: YAML highlighting, line numbers, folding, and search
+(`Ctrl`/`Cmd`+`F`). `Tab` indents inside it rather than moving to the next field, so use
+`Escape` then `Tab` to leave. It completes placeholders as you type — see
+[values another service owns](#values-another-service-owns).
+
+The same editor holds injected file contents, highlighting them as YAML when the target path ends
+`.yaml` or `.yml`.
+
+## Starting from a framework skeleton
+
+The create-template form has a **Start from** picker above the spec field. Choosing *Spring Boot*,
+*Quarkus* or *Ruby on Rails* fills the editor with a commented skeleton for that framework, and
+*Blank* empties it again. Only the spec is filled — the name, slug, description and scope stay
+yours, because the template models *your* application, not the framework it happens to use. If the
+spec already holds something you typed, switching asks before replacing it.
+
+A skeleton is a one-off copy, not a subscription: what you save is an ordinary template with no
+link back, and nothing updates it later. Replace the image, delete what you don't need.
+
+Each one wires up the four things a first application template usually gets wrong.
+
+**An ingress port, and the framework's forwarded-headers switch.** `fadebox.ingress.port` is what
+publishes the app at its [instance URL](ingress.md). Without the matching framework setting —
+`SERVER_FORWARD_HEADERS_STRATEGY` for Spring Boot, `QUARKUS_HTTP_PROXY_PROXY_ADDRESS_FORWARDING`
+for Quarkus, nothing for Rails — the links and redirects the app generates point at `localhost`
+instead of the instance. Traefik overwrites those headers for traffic arriving from outside, but a
+container belonging to another instance shares the edge network and can set them directly, so
+don't make authorization decisions on them.
+
+**The database by reference rather than by literal**, using
+[`{{service.postgres.*}}`](#values-another-service-owns) so that renaming the provider or
+overriding its password rewires the app instead of breaking it. Delete those lines if the app has
+no database, or change `postgres` to whatever you named that service.
+
+**A healthcheck the image can actually run** — the part that most often goes wrong, below.
+
+**Migrations as an init helper**, in the Rails skeleton: `db:prepare` runs as a
+[`fadebox.role: init`](../concepts/templates.md#a-template-provides-exactly-one-service) helper on
+the app's own image, so an image-tag override moves the app and its migrations together, and the
+wave waits for the migration to exit 0 before the app starts.
+
+### The healthcheck has to match your image
+
+[Waves gate on *healthy*](#healthchecks-earn-their-keep), so a probe that can never succeed does
+not merely leave a container looking unwell — it stalls the deploy until it times out, with
+nothing in the logs to say why. The probe has to be a tool the image actually ships, and the JVM
+images differ more than you would expect:
+
+| Image | `curl` | `wget` | Can run `java Health.java` |
+| --- | --- | --- | --- |
+| `eclipse-temurin:*-jre` | yes | yes | **no** |
+| `ubi9/openjdk-*-runtime` | yes | no | yes |
+| Images built by buildpacks | often neither | often neither | no |
+
+The skeletons probe with `curl -fsS`, which covers the first two. If your image ships neither curl
+nor wget — buildpack-built images frequently ship neither — add one in your Dockerfile, or pick a
+run image that has one.
+
+The last column is the trap. `java Health.java` looks like a probe with no dependencies beyond the
+JVM, but running a `.java` file directly compiles it first, and a JRE has no compiler. On a JRE
+image — the usual base for a Spring Boot service — that probe fails forever.
+
+### Secrets are not shipped in a skeleton
+
+The Rails skeleton deliberately leaves `SECRET_KEY_BASE` unset, and Rails will not boot in
+production without one. That is the intent: a value shipped inside a skeleton would be identical in
+every copy of it, and it signs session cookies on a URL the ingress publishes, so anyone who knew
+the skeleton could forge a session. Set your own — on the `db-prepare` helper as well as the app,
+since an environment override reaches only the main container — or read it from
+[git](git-value-sources.md).
 
 ## A worked example
 
