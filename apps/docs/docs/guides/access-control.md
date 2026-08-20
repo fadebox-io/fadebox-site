@@ -54,14 +54,36 @@ Membership comes from one of two places:
 
 ### Two ways to work with the same machinery
 
-**From the project** — *Project → Settings → Members*. A maintainer adds a colleague and picks a
-role. Behind the scenes the project owns a canonical group per role, and the member is added to it;
+**From the project** — *Project → Settings → Members*. A maintainer starts typing a name, email or
+group and picks from the matches, then chooses a role — no need to know a username or a group slug
+by heart. The search runs on the server and reaches accounts and groups that are *not* in the
+project yet, which is why it is a maintainer's to use rather than any member's. Behind the scenes the project owns a canonical group per role, and the member is added to it;
 you never have to think about groups to run a project. Rows that came from a shared org group or
 from an SSO sync appear here read-only — revoking them belongs where they were granted.
 
 **From the platform** — *Access → Groups*, as an admin. This is where you create groups that span
 projects (`platform-team`, `qa`), give them roles in several projects at once, and attach claim
 mappings.
+
+## Passwords
+
+A password the account holder did not choose is temporary. That covers the generated bootstrap
+password, an account an admin creates with a password typed into the form, and an admin resetting
+somebody's password. Until it is replaced, the account can reach exactly one thing — the password
+form — and everything else answers `403`; the create-user form says as much, so an admin knows
+what they are handing over.
+
+Replacing it needs the current password, and clearing the flag frees the **session already open**,
+so nobody has to sign in twice. A user who cannot produce the current password can still sign out
+from that screen rather than being stuck on a dead session.
+
+Changing your own password lives at *Settings → Account*. It appears only for accounts that have a
+password here at all: a federated user's credentials belong to their identity provider, and a
+service account has none, so both see a sentence saying where the credential lives instead of a
+form that could not work.
+
+An account locked this way also cannot authenticate with an [API key](ci-api-keys.md), and cannot
+create one — which makes forcing a reset a way to contain an account without deleting it.
 
 ## Mapping identity-provider groups
 
@@ -99,3 +121,7 @@ Free covers three service accounts, an allowance separate from the one for peopl
 CI pipelines authenticate as **service accounts**: accounts with roles and memberships like anyone
 else, but with no password and no interactive sign-in. They hold
 [API keys](ci-api-keys.md) instead.
+
+A key is not only a service-account thing: you can issue one for your own account too, and it
+carries exactly your roles and projects. Only you can create or revoke it — see
+[Your own keys](ci-api-keys.md#your-own-keys).

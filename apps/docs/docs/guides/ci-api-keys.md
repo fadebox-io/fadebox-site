@@ -1,11 +1,20 @@
 ---
-title: CI with service accounts & API keys
+title: API keys — for CI, and for you
 ---
 
-For deploys without a browser session — CI pipelines, scripts — Fadebox has **service accounts**:
-users of origin `SERVICE` with roles like anyone else, but no password and no interactive sign-in.
-They authenticate exclusively through **API keys** (`Authorization: Bearer fbx_...`), created by a
-project maintainer on the project page (or via the API).
+Anything that talks to Fadebox without a browser session authenticates with an **API key**
+(`Authorization: Bearer fbx_...`). There are two kinds, and which you want depends on whether the
+thing acting is a pipeline or a person.
+
+- A **service-account key** is for CI. A service account is a user of origin `SERVICE` with roles
+  like anyone else, but no password and no interactive sign-in; a project maintainer creates its
+  keys on the project page (or via the API). Instances it deploys are owned by the account, not by
+  whoever clicked the button.
+- A **personal key** is your own credential, for the CLI on your machine and for one-off scripts.
+  You create it under *Settings → API Keys*, and it acts as **you**. See
+  [Your own keys](#your-own-keys).
+
+Both are `fbx_` tokens, both are shown exactly once, and both follow the same rule below.
 
 ## The model
 
@@ -24,6 +33,40 @@ account's roles and project memberships, like a signed-in user.
 
 The token is shown **exactly once** at creation (only its hash is stored); revoke a key by deleting
 it, or disable the whole account by deactivating it.
+
+### Expiry
+
+A key can be given a lifetime — 30 days, 90 days, a year — after which it stops authenticating.
+The key stays in the list, marked expired, so a pipeline that suddenly fails has a visible cause
+rather than a mystery.
+
+Expiry is **optional, and CI keys default to not having one**. A key sitting in a secret store
+that quietly lapses breaks a deploy for whoever happens to be on call, so committing to a rotation
+schedule should be a decision rather than a default. Personal keys default the other way, to 90
+days — they live on laptops.
+
+## Your own keys
+
+*Settings → API Keys* issues a key for your own account. It carries exactly what you carry: the
+same global roles, the same projects, the same everything. That is the whole model — there is no
+narrower key, and no way to make one do less than you can.
+
+Three consequences worth knowing before you create one:
+
+- **Only you can issue one, and only you can revoke one.** Not a project maintainer, not an admin.
+  A key that acted as someone else would put their name on every request it made, so the route to
+  issue one simply doesn't exist. What an admin *can* do is deactivate your account or force a
+  password reset — either one refuses every key you hold, from the next request onwards, and both
+  are reversible.
+- **A key cannot create another key.** If you try, through either the personal or the project
+  route, you get a `403` and a message saying to sign in. This is why a leaked token cannot quietly
+  grow itself a replacement that survives revoking the original.
+- **Group changes from your identity provider reach a key only after you next sign in.** A key
+  reads the roles stored in Fadebox, and those refresh at interactive sign-in. Anything changed in
+  Fadebox itself — a revoked role, a deactivated account — applies on the very next request.
+
+If you sign in through SSO you have no password, so a personal key is how you use the
+[CLI](cli.md) at all.
 
 ## Using the key
 
@@ -72,3 +115,28 @@ keyed by service — `.containers.web.urls[0]` is the preview URL of the `web` s
 A key is scoped by its **account**, so it sees what that account's roles and memberships reach: the
 project list, the cross-project overview and the template catalog all narrow to them, and a `403`
 means a missing role, the same as for a person. See [Users, groups and roles](access-control.md).
+
+## When a call is refused
+
+A refusal carries a machine-readable code alongside the sentence, so a script can branch on the
+reason instead of matching on English:
+
+```json
+HTTP 409
+{
+  "error": "template_in_use",
+  "message": "Template 'postgres' is used by 3 environments — remove it from them before deleting it",
+  "args": { "template": "postgres", "count": 3 }
+}
+```
+
+- **`error`** identifies the rule that refused. Today: `template_in_use`, `already_exists` (with a
+  `resource` arg), `environment_blueprint`, `environment_has_instances`, `instance_state`, plus the
+  licence refusals. More refusals gain codes over time.
+- **`message`** is always present and always readable, so a client that knows no codes loses
+  nothing by ignoring `error` entirely.
+- **`args`** carries the values already in the message, split out — useful for building your own
+  wording, and never worth parsing the sentence for.
+
+Treat an unrecognised `error` as you would a bare status code: the `message` is the fallback, and
+codes are added over time rather than renamed.
