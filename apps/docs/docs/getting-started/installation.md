@@ -106,7 +106,11 @@ log:
 docker compose logs app | grep "generated password"
 ```
 
-Sign in and change it.
+Sign in with it. Fadebox then **requires** a new password before the account can do anything
+else — a password somebody (or something) else chose is treated as temporary, so the first screen
+after this sign-in is the password form and every other page answers 403 until you are through it.
+The same applies to any account an admin creates or resets. See
+[Passwords](../guides/access-control.md#passwords).
 
 :::warning
 

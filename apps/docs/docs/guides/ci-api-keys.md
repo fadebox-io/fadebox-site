@@ -115,3 +115,28 @@ keyed by service — `.containers.web.urls[0]` is the preview URL of the `web` s
 A key is scoped by its **account**, so it sees what that account's roles and memberships reach: the
 project list, the cross-project overview and the template catalog all narrow to them, and a `403`
 means a missing role, the same as for a person. See [Users, groups and roles](access-control.md).
+
+## When a call is refused
+
+A refusal carries a machine-readable code alongside the sentence, so a script can branch on the
+reason instead of matching on English:
+
+```json
+HTTP 409
+{
+  "error": "template_in_use",
+  "message": "Template 'postgres' is used by 3 environments — remove it from them before deleting it",
+  "args": { "template": "postgres", "count": 3 }
+}
+```
+
+- **`error`** identifies the rule that refused. Today: `template_in_use`, `already_exists` (with a
+  `resource` arg), `environment_blueprint`, `environment_has_instances`, `instance_state`, plus the
+  licence refusals. More refusals gain codes over time.
+- **`message`** is always present and always readable, so a client that knows no codes loses
+  nothing by ignoring `error` entirely.
+- **`args`** carries the values already in the message, split out — useful for building your own
+  wording, and never worth parsing the sentence for.
+
+Treat an unrecognised `error` as you would a bare status code: the `message` is the fallback, and
+codes are added over time rather than renamed.
