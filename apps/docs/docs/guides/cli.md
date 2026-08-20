@@ -3,9 +3,14 @@ title: The fadebox CLI
 ---
 
 `fadebox` is a single native binary that drives the same API the UI does, authenticating with an
-[API key](ci-api-keys.md). It exists for pipelines: the useful half is not wrapping REST calls, it
-is the **deploy loop** — deploy is asynchronous, so anything that gates a build on an environment
-coming up has to poll, decide what counts as success, and report why it failed.
+[API key](ci-api-keys.md). It was built for pipelines — the useful half is not wrapping REST calls,
+it is the **deploy loop**, since deploy is asynchronous and anything that gates a build on an
+environment coming up has to poll, decide what counts as success, and report why it failed.
+
+It works just as well from your own machine. Any key drives it, so you can point it at
+[a key of your own](ci-api-keys.md#your-own-keys) and act as yourself, or at a service account's
+key and act as the pipeline does. If you sign in through SSO you have no password, so a personal
+key is how you use the CLI at all.
 
 ## Install
 
@@ -30,6 +35,10 @@ fadebox login --url https://fadebox.example.com --project demo --env dev
 It prompts for the key so it does not land in your shell history, calls `/api/me` to confirm it
 works, and writes `~/.config/fadebox/config.yaml` — created with mode `0600` before anything is
 written to it, so the token never touches disk world-readable.
+
+Whatever `login` prints back is who the CLI now acts as: your own username for a personal key, the
+service account's for a CI one. Every command afterwards reaches exactly as far as that account
+does.
 
 Contexts are named, so one machine can talk to several installations:
 
@@ -100,6 +109,13 @@ through.
 
 Every command reaches exactly as far as the key's account does — a `403` means a missing role,
 exactly as it would for a person.
+
+A `401` means the server would not accept the token at all. The CLI cannot tell you which reason,
+because the server deliberately gives the same answer to every one of them — a wrong secret, a key
+that was revoked or has expired, a deactivated account, and an account being made to change its
+password all come back identically, so the endpoint cannot be used to probe which keys exist. The
+things worth checking, in the order they usually bite: has the key expired (its expiry is on the
+key's row in the UI), was it revoked, and can the account still sign in at all.
 
 ## Output and exit codes
 
