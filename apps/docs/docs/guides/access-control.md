@@ -99,3 +99,7 @@ Free covers three service accounts, an allowance separate from the one for peopl
 CI pipelines authenticate as **service accounts**: accounts with roles and memberships like anyone
 else, but with no password and no interactive sign-in. They hold
 [API keys](ci-api-keys.md) instead.
+
+A key is not only a service-account thing: you can issue one for your own account too, and it
+carries exactly your roles and projects. Only you can create or revoke it — see
+[Your own keys](ci-api-keys.md#your-own-keys).
