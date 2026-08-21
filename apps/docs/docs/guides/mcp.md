@@ -11,11 +11,11 @@ own model and its own budget, and every call it makes is authenticated with an o
 [API key](ci-api-keys.md) and refused exactly where you would be refused. Nothing about your
 estate leaves the installation unless your own agent sends it somewhere.
 
-The endpoint is at `/api/mcp` on the same host as everything else, and it needs no configuration
+The endpoint is at `/mcp` on the same host as everything else, and it needs no configuration
 to switch on:
 
 ```
-https://fadebox.example.com/api/mcp
+https://fadebox.example.com/mcp
 ```
 
 ## Give the agent its own account
@@ -50,7 +50,7 @@ anything, keys included. Sign in and change it first, or key creation answers
 **Claude Code**, from your project directory:
 
 ```bash
-claude mcp add --transport http fadebox https://fadebox.example.com/api/mcp \
+claude mcp add --transport http fadebox https://fadebox.example.com/mcp \
   --header "Authorization: Bearer fbx_your_key_here"
 ```
 
@@ -62,7 +62,7 @@ transport, URL and header — in JSON:
   "mcpServers": {
     "fadebox": {
       "type": "http",
-      "url": "https://fadebox.example.com/api/mcp",
+      "url": "https://fadebox.example.com/mcp",
       "headers": { "Authorization": "Bearer fbx_your_key_here" }
     }
   }
