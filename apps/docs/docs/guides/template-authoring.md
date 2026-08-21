@@ -22,6 +22,9 @@ Top-level `networks:` and `volumes:` are supported too.
 Format variants are handled transparently — string ports (`"5432:5432"`) and long form, string and
 mapping volumes, `healthcheck` with its usual sub-keys.
 
+The [spec editor](#the-spec-editor) completes these keys as you type, so this table is a reference
+rather than something to keep in your head.
+
 Two rules to know:
 
 - **Any unsupported key is a hard error**, not a silent drop. `build`, `env_file`, `profiles` and
@@ -173,6 +176,18 @@ The spec field is a code editor: YAML highlighting, line numbers, folding, and s
 (`Ctrl`/`Cmd`+`F`). `Tab` indents inside it rather than moving to the next field, so use
 `Escape` then `Tab` to leave. It completes placeholders as you type — see
 [values another service owns](#values-another-service-owns).
+
+It also completes the Compose spec itself, which is why the
+[subset table](#the-supported-compose-subset) above is worth reading once rather than memorising.
+Start typing a key and the editor offers the ones valid *at that indentation* — the top level, a
+service, a `healthcheck`, a long-form `ports` or `volumes` entry — each with a one-line hint. Keys
+whose value is an enum offer it after the colon: `restart`, a `depends_on` condition, a port
+`protocol`. Under `labels:`, the [four directives](#label-directives) are offered by name, with
+their values.
+
+What it offers is exactly what the parser accepts, so a suggested key is never one that gets
+rejected on save. The reverse is not a promise: a key the editor doesn't suggest at that spot may
+still be valid YAML the parser takes — completion is a shortcut, and the save is the authority.
 
 The same editor holds injected file contents, highlighting them as YAML when the target path ends
 `.yaml` or `.yml`.
