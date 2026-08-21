@@ -39,6 +39,7 @@ const sidebars: SidebarsConfig = {
         'guides/oidc-sso',
         'guides/ci-api-keys',
         'guides/cli',
+        'guides/mcp',
         'guides/audit-log',
         'guides/licensing',
       ],
