@@ -33,6 +33,11 @@ give it an account that can do that much, and no more.
 - Use a **separate key per agent** — your laptop's assistant and the CI bot should not share one.
   Every write lands in the [audit log](audit-log.md) naming the key that made it, so separate keys
   are what makes "which agent did this" answerable.
+- **Give it an expiry.** CI keys default to none, on the reasoning that a pipeline key which
+  quietly lapses breaks a deploy for whoever is on call. An agent key is a different animal: it
+  lives in a config file on a laptop and turns up in transcripts, so a lifetime bounds a leak you
+  never noticed. If one does surface somewhere shared, delete it — the key list shows when each
+  was last used, so you can tell whether it was used after the moment you are worried about.
 
 **Do not paste a personal key into an agent's configuration** — least of all an admin's. A
 personal key acts as *you*, everywhere you can reach, and an agent reads untrusted text all day:
@@ -73,11 +78,32 @@ The exact file and key names differ per client — check yours — but every cli
 remote MCP servers over HTTP with custom headers will work. Ask your agent to list its tools to
 confirm the connection; you should see sixteen `fadebox` tools.
 
-Both forms put the key in a file in plain text, which is worth a thought if that file is synced or
-shared. Some clients can fetch the header at connect time instead — Claude Code takes
-`headersHelper` in place of `headers`, pointing at a script that prints
-`{"Authorization": "Bearer …"}` — which lets the key live in your secret store or keychain and
-never be written down.
+### Keeping the key out of the file
+
+Both forms above write the key into a configuration file in plain text, and that is where it
+stays. Clients redact credentials in *some* places — Claude Code strips credential-like text out
+of connection-failure details — but that covers error paths, not everything: a command echoed
+back in a transcript still shows the header you typed, and so does your shell history.
+
+If the key would be awkward to find in a screenshot or a pasted session, fetch it at connect time
+instead. Claude Code takes `headersHelper` in place of `headers`, naming a command that prints
+the header as JSON:
+
+```json
+{
+  "mcpServers": {
+    "fadebox": {
+      "type": "http",
+      "url": "https://fadebox.example.com/mcp",
+      "headersHelper": "echo \"{\\\"Authorization\\\": \\\"Bearer $(pass fadebox/agent-key)\\\"}\""
+    }
+  }
+}
+```
+
+It runs on every connection and the result is not cached, so the key can live in a password
+manager or keychain and never be written into a config file at all. Substitute whatever your
+secret store's read command is.
 
 ## What the agent can do
 
