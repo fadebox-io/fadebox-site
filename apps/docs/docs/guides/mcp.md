@@ -110,7 +110,7 @@ secret store's read command is.
 | | |
 | --- | --- |
 | **Find things** | `list_projects`, `list_environments`, `get_environment`, `list_instances`, `list_templates`, `get_template`, `list_catalog` |
-| **Diagnose** | `get_instance` (status, per-container health, exit codes, URLs), `get_instance_logs`, `export_environment` (the Compose project as deployed) |
+| **Diagnose** | `get_instance` (status, per-container health, exit codes, URLs), `get_instance_logs` (tail, or search the whole log), `export_environment` (the Compose project as deployed) |
 | **Operate** | `create_instance`, `deploy_instance`, `stop_instance`, `delete_instance` |
 | **Edit** | `set_service_image_tag`, `clone_environment` |
 
@@ -119,6 +119,10 @@ Which makes the useful requests roughly these:
 > *Why is `pr-42` red?* — the agent reads the instance's status, finds the unhealthy container and
 > its exit code, tails that container's logs, reads the environment's variables and the template's
 > healthcheck, and tells you what broke.
+
+> *Find where postgres refused the connection, it was hours ago.* — a log big enough to hold that
+> answer is far bigger than a tool result, so the agent searches instead of tailing: the scan runs
+> on the Fadebox server and only matching lines come back, however chatty the container.
 
 > *Spin up an instance of `shop-dev` called `demo-friday` and give me the URL.* — create, deploy,
 > poll until it is running, report the URLs.
