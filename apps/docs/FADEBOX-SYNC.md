@@ -6,8 +6,8 @@ state, not published content.
 
 ## Current state
 
-- **Last documented fadebox commit:** `ad0bdf8` (master, 2026-08-21)
-- **Merged PRs reviewed through:** #116 (#66, #89, #99 and #110 were closed unmerged or are
+- **Last documented fadebox commit:** `669f611` (master, 2026-08-21)
+- **Merged PRs reviewed through:** #118 (#66, #89, #99 and #110 were closed unmerged or are
   issues; #79 never existed)
 
 No known gaps. (Runtime resource reclaim/purge was the last one — undocumented until
@@ -37,6 +37,7 @@ docs had never described.)
 
 | Date | Covered | Pages touched |
 | --- | --- | --- |
+| 2026-08-21 | Reviewed and **deliberately not covered**: #118, the dashboard's *Recent Deployments* rows becoming links to their project, environment and instance (the instance one opening its status drawer). UI-level — it adds no concept, changes no surface a reader has to be told about, and the dashboard is not described anywhere in these docs; the same call the log records for #105, the spec editor itself. Counters bumped to `669f611`. | none — review pass. |
 | 2026-08-21 | Compose completion in the spec editor — the editor now offers the supported Compose keys per indentation level, the enum values, and the four `fadebox.*` label directives. Written ahead of the merge; fadebox PR #116 has since **merged** (`ad0bdf8`), and the counters above moved with this row. The subset and the directives were already documented in full, so the pass is deliberately small: two cross-links turning that table from something to memorise into a reference, plus the one thing the feature cannot promise — what it suggests is always accepted, but a key it doesn't suggest at that spot may still be valid, because the save is the authority, not the menu. | `guides/template-authoring.md` — *The spec editor* gains what it completes and the limit of that guarantee; *The supported Compose subset* points at it. |
 | 2026-08-21 | The MCP endpoint — Fadebox serving its tool registry to the agent you already run, authenticated by an ordinary API key. Written ahead of the merge; #111 and #113 (server-side log search) have since **merged**, and the counters above moved with this row. The security half is the part that needed writing down and did not exist anywhere user-facing: an agent's authority is its account's roles, so each agent gets its own service account at the role it should have, and a personal key — least of all an admin's — is never pasted into an agent config. Also documented deliberately: tool results are **not** redacted, because ephemeral environments need their values to start and an agent writes back what it reads. | New `guides/mcp.md` (+ sidebar, after the CLI); `guides/ci-api-keys.md` — an agent is the third consumer of a key, in *Using the key*; `guides/cli.md` — points at MCP for when you want an agent rather than a command. |
 | 2026-08-20 | Follow-up to the pass below: the CLI guide still framed the tool as a pipelines-only thing and said nothing about which kind of key drives it. No fadebox PR — #109 needed no CLI code change at all, which is the point worth writing down. | `guides/cli.md` — the intro now says either kind of key drives it and that SSO users need a personal one, `login` says who you end up acting as, and a new note explains why a `401` cannot name its cause (the server answers identically for wrong/revoked/expired/disabled, so it cannot be probed). |
