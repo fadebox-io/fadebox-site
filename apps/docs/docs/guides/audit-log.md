@@ -21,6 +21,20 @@ Filters narrow by actor, action, outcome, target and a time window, and free-tex
 actor names, target names and projects. The same queries are available over the API
 (`GET /api/admin/audit`, `GET /api/projects/{project}/audit`) for scripting.
 
+### Times are yours, storage is UTC
+
+Every timestamp is **stored** in UTC and **shown** in your browser's own time zone and date
+format, so the same event reads `4:04 PM` for a colleague in Prague and `7:04 AM` for one in
+California. Picking a day in the time-range filter means that day where *you* are, matching the
+column beside it — so a window never hides a row that the listing would have shown.
+
+The clock follows *Settings → Appearance → Time format*: **Automatic** takes its cue from your
+browser's locale, or you can pin 24-hour or 12-hour. That setting governs every timestamp Fadebox
+renders, not just this page.
+
+Over the API the values are raw UTC, without a zone suffix — a script gets the installation's
+clock, not the reader's. Both bounds of a query window are inclusive.
+
 ## What is recorded
 
 Sign-ins — including **failed** ones — and everything that changes state: users, groups and
@@ -32,7 +46,7 @@ installations; and fadebox's own cleanup jobs.
 
 Each event carries the actor (a user, a [service account](ci-api-keys.md) — with the API key
 that authenticated the request — or `SYSTEM` for fadebox's own jobs), the action, the target and
-its project, `SUCCESS` or `FAILURE`, the UTC timestamp, a source IP where the request carries
+its project, `SUCCESS` or `FAILURE`, when it happened, a source IP where the request carries
 one, and action-specific detail: the deploy's error, the export's byte count, the role a
 membership granted.
 
