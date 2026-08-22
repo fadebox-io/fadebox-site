@@ -29,6 +29,13 @@ users, groups — is **not** here. Those are managed in the UI and stored in the
 | `FADEBOX_INSTALLATION_ID` | *(unset)* | Set a **distinct** value per installation when two Fadebox installations share one Docker daemon. Every container is stamped with it and all stop/status queries filter on it; without it, one installation's teardown can remove the other's containers. Changing it later orphans containers deployed under the old value. |
 | `FADEBOX_SECURITY_BOOTSTRAP_ADMIN_ENABLED` | `true` | Creates the `admin` account with a generated password, logged once, when it is missing. Turn off once you manage accounts another way. |
 
+**The process must run in UTC.** Timestamp columns carry no zone and hold whatever the JVM's
+default zone says, while the UI reads them back as UTC and converts to each viewer's zone — so a
+server on any other zone shows every time shifted by its offset, twice over, and instance expiry
+countdowns with it. The container image sets `-Duser.timezone=UTC` for you; set it yourself only
+if you run the jar directly. Fadebox logs a warning at startup when it finds itself anywhere
+else.
+
 ## Deploys
 
 | Variable | Default | What it does |

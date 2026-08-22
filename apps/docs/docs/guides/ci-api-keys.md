@@ -40,6 +40,10 @@ A key can be given a lifetime — 30 days, 90 days, a year — after which it st
 The key stays in the list, marked expired, so a pipeline that suddenly fails has a visible cause
 rather than a mystery.
 
+A lifetime is a span, not a date on the calendar: a key made at 4pm for 30 days stops working at
+4pm on the thirtieth day, wherever you and it happen to be. The list says how long each key has
+left — *expires in about 1 month* — with the exact moment on hover.
+
 Expiry is **optional, and CI keys default to not having one**. A key sitting in a secret store
 that quietly lapses breaks a deploy for whoever happens to be on call, so committing to a rotation
 schedule should be a decision rather than a default. Personal keys default the other way, to 90
